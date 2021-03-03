@@ -7,7 +7,9 @@
 import urllib.request as req
 import sys
 import os
-from html.parser import HTMLParser      
+from html.parser import HTMLParser  
+from numpy import array
+from itertools import chain 
 #-------------------------------------------------------------------------
 ### generatePolicy classes
 
@@ -40,8 +42,16 @@ class LIFO_Policy:
         if len(self.queue) == 0:
             return None
         else:
-            last = self.queue[-1]
-            del self.queue[-1]
+            if array(self.queue).ndim > 1:
+                while array(self.queue).ndim != 1:
+                    self.queue = list(chain.from_iterable(self.queue)) 
+                last = self.queue[-1]
+                del self.queue[-1]
+            else:
+                last = self.queue[-1]
+                del self.queue[-1]
+            print("@@@@@@@@@@@")
+            print(last)
             return last
             
     def updateURLs(self, c, retrievedURLs, retrievedURLsWD, iteration):
@@ -365,7 +375,6 @@ def storeIncomingURLs(c):
             for l in s:
                 f.write(line + " " + l + "\n")
         f.close()
-        
 
 
 if __name__ == "__main__":
