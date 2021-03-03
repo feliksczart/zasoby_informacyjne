@@ -30,6 +30,25 @@ class Dummy_Policy:
             
     def updateURLs(self, c, retrievedURLs, retrievedURLsWD, iteration):
         pass
+
+class LIFO_Policy:
+
+    def __init__(self,c):
+        self.queue = c.seedURLs.copy()
+
+    def getURL(self, c, iteration):
+        if len(self.queue) == 0:
+            return None
+        else:
+            last = self.queue[-1]
+            del self.queue[-1]
+            return last
+            
+    def updateURLs(self, c, retrievedURLs, retrievedURLsWD, iteration):
+        sorted_retURLs = list(retrievedURLs.copy())
+        sorted_retURLs.sort(key=lambda url: url[len(url) - url[::-1].index('/'):])
+        self.queue.append(sorted_retURLs)
+        pass
         
     
 #-------------------------------------------------------------------------
@@ -52,11 +71,11 @@ class Container:
          # Incoming URLs (to <- from; set of incoming links)
         self.incomingURLs = {}
         # Class which maintains a queue of urls to visit. 
-        self.generatePolicy = Dummy_Policy()
+        self.generatePolicy = LIFO_Policy(self)
         # Page (URL) to be fetched next
         self.toFetch = None
         # Number of iterations of a crawler. 
-        self.iterations = 3
+        self.iterations = 10
 
         # If true: store all crawled html pages in the provided directory.
         self.storePages = True
