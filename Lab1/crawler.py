@@ -152,10 +152,7 @@ def main():
     if c.storeOutgoingURLs:
         storeOutgoingURLs(c)
     if c.storeIncomingURLs:
-        storeIncomingURLs(c)    
-
-    removeWrongURL(c,1)        
-    
+        storeIncomingURLs(c)         
 
 #-------------------------------------------------------------------------
 # Inject seed URL into a queue (DONE)
@@ -205,7 +202,7 @@ def removeWrongURL(c,iteration):
 def parse(c, page, iteration):
     # data to be saved (DONE)
     htmlData = page.read()
-    # obtained URLs (DONE?)
+    # obtained URLs (TODO)
 
     p = Parser()
     p.feed(str(htmlData))
@@ -225,8 +222,12 @@ def getNormalisedURLs(retrievedURLs):
 # Remove duplicates (duplicates) (TODO)
 def removeDuplicates(c, retrievedURLs):
     # TODO
+    cp_rURLs = retrievedURLs.copy()
 
-    return set(retrievedURLs)
+    for i in retrievedURLs:
+        if i in c.URLs:
+            cp_rURLs.remove(i)
+    return cp_rURLs
 
 #-------------------------------------------------------------------------  
 # Filter out some URLs (TODO)
