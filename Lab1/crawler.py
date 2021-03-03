@@ -227,6 +227,7 @@ def removeDuplicates(c, retrievedURLs):
     for i in retrievedURLs:
         if i in c.URLs:
             cp_rURLs.remove(i)
+    
     return cp_rURLs
 
 #-------------------------------------------------------------------------  
