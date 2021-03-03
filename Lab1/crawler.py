@@ -221,7 +221,7 @@ def getNormalisedURLs(retrievedURLs):
 #-------------------------------------------------------------------------  
 # Remove duplicates (duplicates) (TODO)
 def removeDuplicates(c, retrievedURLs):
-    ### TODO
+    #### TODO
     cp_rURLs = retrievedURLs.copy()
 
     for i in retrievedURLs:
