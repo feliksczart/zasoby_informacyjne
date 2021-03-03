@@ -99,11 +99,11 @@ def main():
                 
         # Generate: it downloads html page under "toFetch URL"
         page = fetch(c)
-    
+
         if page == None:
             if c.debug:
                 print("   Unexpected error; skipping this page")
-            removeWrongURL(c)
+            removeWrongURL(c,iteration)
             continue
             
         # Parse file
@@ -152,7 +152,9 @@ def main():
     if c.storeOutgoingURLs:
         storeOutgoingURLs(c)
     if c.storeIncomingURLs:
-        storeIncomingURLs(c)            
+        storeIncomingURLs(c)    
+
+    removeWrongURL(c,1)        
     
 
 #-------------------------------------------------------------------------
@@ -193,8 +195,9 @@ def fetch(c):
         
 #-------------------------------------------------------------------------  
 # Remove wrong URL (TODO)
-def removeWrongURL(c):
+def removeWrongURL(c,iteration):
     #TODO
+    c.URLs.remove(list(c.URLs)[iteration])
     pass
     
 #-------------------------------------------------------------------------  
@@ -222,7 +225,8 @@ def getNormalisedURLs(retrievedURLs):
 # Remove duplicates (duplicates) (TODO)
 def removeDuplicates(c, retrievedURLs):
     # TODO
-    return retrievedURLs
+
+    return set(retrievedURLs)
 
 #-------------------------------------------------------------------------  
 # Filter out some URLs (TODO)
