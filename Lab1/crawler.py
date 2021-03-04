@@ -46,23 +46,23 @@ class LIFO_Policy:
         self.queue = c.seedURLs.copy()
 
     def getURL(self, c, iteration):
-        fixer = []
+        self.queue = [x for x in self.queue if x != []]
         if len(self.queue) == 0:
-            return None
+            self.queue = c.seedURLs.copy()
+
+        self.queue = [x for x in self.queue if x != []]
+        if array(self.queue).ndim > 1:
+            while array(self.queue).ndim != 1:
+                self.queue = list(chain.from_iterable(self.queue)) 
+            last = self.queue[-1]
+            del self.queue[-1]
         else:
-            self.queue = [x for x in self.queue if x != []]
-            if array(self.queue).ndim > 1:
-                while array(self.queue).ndim != 1:
-                    self.queue = list(chain.from_iterable(self.queue)) 
-                last = self.queue[-1]
-                del self.queue[-1]
-            else:
-                last = self.queue[-1]
-                del self.queue[-1]
-            if isinstance(last, list):
-                last = last[0]
-            
-            return last
+            last = self.queue[-1]
+            del self.queue[-1]
+        if isinstance(last, list):
+            last = last[0]
+        
+        return last
             
     def updateURLs(self, c, retrievedURLs, retrievedURLsWD, iteration):
         sorted_retURLs = list(retrievedURLs.copy())
@@ -76,23 +76,21 @@ class FIFO_Policy:
         self.queue = c.seedURLs.copy()
 
     def getURL(self, c, iteration):
-        fixer = []
+        self.queue = [x for x in self.queue if x != []]
         if len(self.queue) == 0:
-            return None
+            self.queue = c.seedURLs.copy()
+        if array(self.queue).ndim > 1:
+            while array(self.queue).ndim != 1:
+                self.queue = list(chain.from_iterable(self.queue)) 
+            first = self.queue[0]
+            del self.queue[0]
         else:
-            self.queue = [x for x in self.queue if x != []]
-            if array(self.queue).ndim > 1:
-                while array(self.queue).ndim != 1:
-                    self.queue = list(chain.from_iterable(self.queue)) 
-                first = self.queue[0]
-                del self.queue[0]
-            else:
-                first = self.queue[0]
-                del self.queue[0]
-            if isinstance(first, list):
-                first = first[0]
-            
-            return first
+            first = self.queue[0]
+            del self.queue[0]
+        if isinstance(first, list):
+            first = first[0]
+        
+        return first
             
     def updateURLs(self, c, retrievedURLs, retrievedURLsWD, iteration):
         sorted_retURLs = list(retrievedURLs.copy())
@@ -123,13 +121,13 @@ class Container:
         # Class which maintains a queue of urls to visit. 
         
         # self.generatePolicy = Dummy_Policy()
-        # self.generatePolicy = LIFO_Policy(self)
-        self.generatePolicy = FIFO_Policy(self)
+        self.generatePolicy = LIFO_Policy(self)
+        # self.generatePolicy = FIFO_Policy(self)
 
         # Page (URL) to be fetched next
         self.toFetch = None
         # Number of iterations of a crawler. 
-        self.iterations = 5
+        self.iterations = 10
 
         # If true: store all crawled html pages in the provided directory.
         self.storePages = True
@@ -314,7 +312,7 @@ def removeDuplicates(c, retrievedURLs):
 #-------------------------------------------------------------------------  
 # Filter out some URLs (TODO)
 def getFilteredURLs(c, retrievedURLs):
-    toLeft = set([url for url in retrievedURLs if url.lower().startswith(c.rootPage) and url.lower() not in c.URLs])
+    toLeft = set([url for url in retrievedURLs if url.lower().startswith(c.rootPage) and url.lower() not in c.toFetch])
     if c.debug:
         print("   Filtered out " + str(len(retrievedURLs) - len(toLeft)) + " urls")  
     return toLeft
