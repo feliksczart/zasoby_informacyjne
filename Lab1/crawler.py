@@ -246,7 +246,7 @@ def removeWrongURL(c):
 def parse(c, page, iteration):
     # data to be saved (DONE)
     htmlData = page.read()
-    # obtained URLs (TODO)
+    # obtained URLs (TODO) ###
 
     p = Parser()
     p.feed(str(htmlData))
