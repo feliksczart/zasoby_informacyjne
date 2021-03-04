@@ -9,7 +9,9 @@ import sys
 import os
 from html.parser import HTMLParser  
 from numpy import array
-from itertools import chain 
+from itertools import chain
+
+trace = []
 #-------------------------------------------------------------------------
 ### generatePolicy classes
 
@@ -50,8 +52,9 @@ class LIFO_Policy:
             else:
                 last = self.queue[-1]
                 del self.queue[-1]
-            print("@@@@@@@@@@@")
-            print(last)
+            if isinstance(last, list):
+                last = last[0]
+            
             return last
             
     def updateURLs(self, c, retrievedURLs, retrievedURLsWD, iteration):
@@ -181,7 +184,10 @@ def main():
     if c.storeOutgoingURLs:
         storeOutgoingURLs(c)
     if c.storeIncomingURLs:
-        storeIncomingURLs(c)         
+        storeIncomingURLs(c)     
+
+    global trace
+    show_beauty_trace(trace) 
 
 #-------------------------------------------------------------------------
 # Inject seed URL into a queue (DONE)
@@ -194,6 +200,7 @@ def inject(c):
 #-------------------------------------------------------------------------
 # Produce next URL to be fetched (DONE)
 def generate(c, iteration):
+    global trace
     url = c.generatePolicy.getURL(c, iteration)
     if url == None:
         if c.debug:
@@ -202,6 +209,7 @@ def generate(c, iteration):
         return None
     # WITH NO DEBUG!
     print("   Next page to be fetched = " + str(url)) 
+    trace.append(str(url))
     c.toFetch = url
     
 
@@ -376,6 +384,14 @@ def storeIncomingURLs(c):
                 f.write(line + " " + l + "\n")
         f.close()
 
+def show_beauty_trace(trace):
+    print("Trace: ",end="")
+    for i in trace:
+        i = i[::-1]
+        i = i.split('/')
+        i = i[0].split('.')
+        print(i[1][::-1], end=" ")
+    print()
 
 if __name__ == "__main__":
     main()
