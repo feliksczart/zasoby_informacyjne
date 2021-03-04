@@ -69,6 +69,36 @@ class LIFO_Policy:
         sorted_retURLs.sort(key=lambda url: url[len(url) - url[::-1].index('/'):])
         self.queue.append(sorted_retURLs)
         pass
+
+class FIFO_Policy:
+
+    def __init__(self,c):
+        self.queue = c.seedURLs.copy()
+
+    def getURL(self, c, iteration):
+        fixer = []
+        if len(self.queue) == 0:
+            return None
+        else:
+            self.queue = [x for x in self.queue if x != []]
+            if array(self.queue).ndim > 1:
+                while array(self.queue).ndim != 1:
+                    self.queue = list(chain.from_iterable(self.queue)) 
+                first = self.queue[0]
+                del self.queue[0]
+            else:
+                first = self.queue[0]
+                del self.queue[0]
+            if isinstance(first, list):
+                first = first[0]
+            
+            return first
+            
+    def updateURLs(self, c, retrievedURLs, retrievedURLsWD, iteration):
+        sorted_retURLs = list(retrievedURLs.copy())
+        sorted_retURLs.sort(key=lambda url: url[len(url) - url[::-1].index('/'):])
+        self.queue.append(sorted_retURLs)
+        pass
         
     
 #-------------------------------------------------------------------------
@@ -91,11 +121,15 @@ class Container:
          # Incoming URLs (to <- from; set of incoming links)
         self.incomingURLs = {}
         # Class which maintains a queue of urls to visit. 
-        self.generatePolicy = LIFO_Policy(self)
+        
+        # self.generatePolicy = Dummy_Policy()
+        # self.generatePolicy = LIFO_Policy(self)
+        self.generatePolicy = FIFO_Policy(self)
+
         # Page (URL) to be fetched next
         self.toFetch = None
         # Number of iterations of a crawler. 
-        self.iterations = 4
+        self.iterations = 5
 
         # If true: store all crawled html pages in the provided directory.
         self.storePages = True
@@ -260,7 +294,10 @@ def parse(c, page, iteration):
 #-------------------------------------------------------------------------  
 # Normalise newly obtained links (TODO)
 def getNormalisedURLs(retrievedURLs):
-    return retrievedURLs
+    normalised = []
+    for i in retrievedURLs:
+        normalised.append(i.lower())
+    return set(normalised)
     
 #-------------------------------------------------------------------------  
 # Remove duplicates (duplicates) (TODO)
@@ -397,7 +434,10 @@ def show_beauty_trace(trace):
         i = i[::-1]
         i = i.split('/')
         i = i[0].split('.')
-        print(i[1][::-1], end=" ")
+        try:
+            print(i[1][::-1], end=" ")
+        except:
+            pass
     print()
 
 if __name__ == "__main__":
