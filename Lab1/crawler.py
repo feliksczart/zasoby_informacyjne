@@ -46,9 +46,11 @@ class LIFO_Policy:
         self.queue = c.seedURLs.copy()
 
     def getURL(self, c, iteration):
+        fixer = []
         if len(self.queue) == 0:
             return None
         else:
+            self.queue = [x for x in self.queue if x != []]
             if array(self.queue).ndim > 1:
                 while array(self.queue).ndim != 1:
                     self.queue = list(chain.from_iterable(self.queue)) 
@@ -93,7 +95,7 @@ class Container:
         # Page (URL) to be fetched next
         self.toFetch = None
         # Number of iterations of a crawler. 
-        self.iterations = 10
+        self.iterations = 4
 
         # If true: store all crawled html pages in the provided directory.
         self.storePages = True
@@ -275,7 +277,7 @@ def removeDuplicates(c, retrievedURLs):
 #-------------------------------------------------------------------------  
 # Filter out some URLs (TODO)
 def getFilteredURLs(c, retrievedURLs):
-    toLeft = set([url for url in retrievedURLs if url.lower().startswith(c.rootPage)])
+    toLeft = set([url for url in retrievedURLs if url.lower().startswith(c.rootPage) and url.lower() not in c.URLs])
     if c.debug:
         print("   Filtered out " + str(len(retrievedURLs) - len(toLeft)) + " urls")  
     return toLeft
