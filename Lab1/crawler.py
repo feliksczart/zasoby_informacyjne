@@ -12,6 +12,7 @@
 import urllib.request as req
 import sys
 import os
+import numpy
 from html.parser import HTMLParser  
 from numpy import array
 from itertools import chain
@@ -152,6 +153,81 @@ class LIFO_Cycle_Policy:
         self.queue.append(sorted_retURLs)
         pass
 
+class LIFO_Authority_Policy:
+
+    def __init__(self,c):
+        self.queue = c.seedURLs.copy()
+        self.fetched = set([])
+        self.incomingURLs = {}
+
+    def getURL(self, c, iteration):
+
+        self.queue = [x for x in self.queue if x != []]
+
+        if len(self.queue) == 0:
+            self.queue, self.fetched = refill(c)
+            
+        self.queue = [x for x in self.queue if x != []]
+
+        if array(self.queue).ndim > 1:
+            
+            while array(self.queue).ndim != 1:
+                self.queue = list(chain.from_iterable(self.queue))
+            
+            try:
+                while self.queue[-1] in self.fetched:
+                    del self.queue[-1]
+
+                last = self.queue[-1]
+                self.fetched.add(last)
+                del self.queue[-1]
+            except:
+                last = c.generatePolicy.getURL(c,iteration)
+        
+        else:
+            try: 
+                if isinstance(self.queue[-1], list):
+                    self.queue[-1] = self.queue[-1][0]
+                
+                while self.queue[-1] in self.fetched:
+                    del self.queue[-1]
+            
+                last = self.queue[-1]
+                self.fetched.add(last)
+                del self.queue[-1]
+            except:
+                last = c.generatePolicy.getURL(c,iteration)
+
+        if isinstance(last, list):
+            last = last[0]
+        
+        for i in self.fetched:
+            x = ""
+            if i not in self.incomingURLs.keys():
+                j = i[::-1]
+                j = j.split('/')
+                j = j[0].split('.')
+                try:
+                    for k in j[1][::-1]:
+                        if k == "s":
+                            continue
+                        else:
+                            x += k
+                except:
+                    pass
+                self.incomingURLs[j[1][::-1]] = int(k)+1
+
+        #print(self.incomingURLs)
+        print(numpy.random.choice(list(self.incomingURLs.keys()),p = [x/sum(self.incomingURLs.values()) for x in self.incomingURLs.values()]), end=" ")
+
+        return last
+            
+    def updateURLs(self, c, retrievedURLs, retrievedURLsWD, iteration):
+        sorted_retURLs = list(retrievedURLs.copy())
+        sorted_retURLs.sort(key=lambda url: url[len(url) - url[::-1].index('/'):])
+        self.queue.append(sorted_retURLs)
+        pass
+
 def refill(c):
     return c.seedURLs.copy(), set([])
 #-------------------------------------------------------------------------
@@ -183,12 +259,14 @@ class Container:
         # self.generatePolicy = LIFO_Policy(self)
         # self.generatePolicy = FIFO_Policy(self)
         
-        self.generatePolicy = LIFO_Cycle_Policy(self)
+        # self.generatePolicy = LIFO_Cycle_Policy(self)
+
+        self.generatePolicy = LIFO_Authority_Policy(self)
 
         # Page (URL) to be fetched next
         self.toFetch = None
         # Number of iterations of a crawler. 
-        self.iterations = 5
+        self.iterations = 50
 
         # If true: store all crawled html pages in the provided directory.
         self.storePages = True
@@ -206,7 +284,9 @@ class Container:
         
         
         # If True: debug
-        self.debug = True 
+        self.debug = False 
+        
+        self.offUnwantedPrints = False
         
 def main():
 
@@ -308,7 +388,8 @@ def generate(c, iteration):
         c.toFetch = None
         return None
     # WITH NO DEBUG!
-    print("   Next page to be fetched = " + str(url)) 
+    if not c.offUnwantedPrints:
+        print("   Next page to be fetched = " + str(url)) 
     trace.append(str(url))
     c.toFetch = url
     
@@ -488,7 +569,7 @@ def storeIncomingURLs(c):
         f.close()
 
 def show_beauty_trace(trace):
-    print("Trace: ",end="")
+    print("\nTrace: ",end="")
     for i in trace:
         i = i[::-1]
         i = i.split('/')
