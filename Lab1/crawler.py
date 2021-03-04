@@ -4,6 +4,11 @@
 # Institute of Computing Science
 # Laboratory of Intelligent Decision Support Systems
 #-------------------------------------------------------------------------
+# ODPOWIEDZI:
+#   e1b7: Because there are 2 links on the s3.html page which link to itself.
+#-------------------------------------------------------------------------
+
+
 import urllib.request as req
 import sys
 import os
@@ -135,7 +140,7 @@ def main():
         if page == None:
             if c.debug:
                 print("   Unexpected error; skipping this page")
-            removeWrongURL(c,iteration)
+            removeWrongURL(c)
             continue
             
         # Parse file
@@ -229,9 +234,9 @@ def fetch(c):
         
 #-------------------------------------------------------------------------  
 # Remove wrong URL (TODO)
-def removeWrongURL(c,iteration):
+def removeWrongURL(c):
     #TODO
-    c.URLs.remove(list(c.URLs)[iteration])
+    c.URLs.remove(c.toFetch)
     pass
     
 #-------------------------------------------------------------------------  
