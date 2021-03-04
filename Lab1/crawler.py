@@ -215,12 +215,12 @@ class LIFO_Authority_Policy:
                             x += k
                 except:
                     pass
-                self.incomingURLs[j[1][::-1]] = int(k)+1
+                self.incomingURLs[i] = int(k)+1
 
         #print(self.incomingURLs)
-        print(numpy.random.choice(list(self.incomingURLs.keys()),p = [x/sum(self.incomingURLs.values()) for x in self.incomingURLs.values()]), end=" ")
+        chosen = numpy.random.choice(list(self.incomingURLs.keys()),p = [x/sum(self.incomingURLs.values()) for x in self.incomingURLs.values()])
 
-        return last
+        return chosen
             
     def updateURLs(self, c, retrievedURLs, retrievedURLsWD, iteration):
         sorted_retURLs = list(retrievedURLs.copy())
