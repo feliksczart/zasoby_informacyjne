@@ -98,7 +98,59 @@ class FIFO_Policy:
         self.queue.append(sorted_retURLs)
         pass
         
-    
+class LIFO_Cycle_Policy:
+
+    def __init__(self,c):
+        self.queue = c.seedURLs.copy()
+        self.fetched = set([])
+
+    def getURL(self, c, iteration):
+        self.queue = [x for x in self.queue if x != []]
+
+        if len(self.queue) == 0:
+            self.queue, self.fetched = refill(c)
+            
+        self.queue = [x for x in self.queue if x != []]
+
+        if array(self.queue).ndim > 1:
+            
+            while array(self.queue).ndim != 1:
+                self.queue = list(chain.from_iterable(self.queue))
+            
+            try:
+                while self.queue[-1] in self.fetched:
+                    del self.queue[-1]
+
+                last = self.queue[-1]
+                self.fetched.add(last)
+                del self.queue[-1]
+            except:
+                last = c.generatePolicy.getURL(c,iteration)
+        
+        else:
+            try: 
+                while self.queue[-1] in self.fetched:
+                    del self.queue[-1]
+            
+                last = self.queue[-1]
+                self.fetched.add(last)
+                del self.queue[-1]
+            except:
+                last = c.generatePolicy.getURL(c,iteration)
+
+        if isinstance(last, list):
+            last = last[0]
+        
+        return last
+            
+    def updateURLs(self, c, retrievedURLs, retrievedURLsWD, iteration):
+        sorted_retURLs = list(retrievedURLs.copy())
+        sorted_retURLs.sort(key=lambda url: url[len(url) - url[::-1].index('/'):])
+        self.queue.append(sorted_retURLs)
+        pass
+
+def refill(c):
+    return c.seedURLs.copy(), set([])
 #-------------------------------------------------------------------------
 # Data container
 class Container:
@@ -106,7 +158,10 @@ class Container:
         # The name of the crawler"
         self.crawlerName = "IRbot"
         # Example ID
-        self.example = "exercise1"
+        
+        # self.example = "exercise1"
+        self.example = "exercise2"
+        
         # Root (host) page
         self.rootPage = "http://www.cs.put.poznan.pl/mtomczyk/ir/lab1/" + self.example
         # Initial links to visit
@@ -121,8 +176,10 @@ class Container:
         # Class which maintains a queue of urls to visit. 
         
         # self.generatePolicy = Dummy_Policy()
-        self.generatePolicy = LIFO_Policy(self)
+        # self.generatePolicy = LIFO_Policy(self)
         # self.generatePolicy = FIFO_Policy(self)
+        
+        self.generatePolicy = LIFO_Cycle_Policy(self)
 
         # Page (URL) to be fetched next
         self.toFetch = None
