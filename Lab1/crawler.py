@@ -129,6 +129,9 @@ class LIFO_Cycle_Policy:
         
         else:
             try: 
+                if isinstance(self.queue[-1], list):
+                    self.queue[-1] = self.queue[-1][0]
+                
                 while self.queue[-1] in self.fetched:
                     del self.queue[-1]
             
@@ -160,7 +163,8 @@ class Container:
         # Example ID
         
         # self.example = "exercise1"
-        self.example = "exercise2"
+        # self.example = "exercise2"
+        self.example = "exercise3"
         
         # Root (host) page
         self.rootPage = "http://www.cs.put.poznan.pl/mtomczyk/ir/lab1/" + self.example
@@ -184,7 +188,7 @@ class Container:
         # Page (URL) to be fetched next
         self.toFetch = None
         # Number of iterations of a crawler. 
-        self.iterations = 10
+        self.iterations = 5
 
         # If true: store all crawled html pages in the provided directory.
         self.storePages = True
