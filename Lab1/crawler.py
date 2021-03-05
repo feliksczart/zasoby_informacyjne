@@ -219,7 +219,7 @@ class LIFO_Authority_Policy:
 
         #print(self.incomingURLs)
         chosen = numpy.random.choice(list(self.incomingURLs.keys()),p = [x/sum(self.incomingURLs.values()) for x in self.incomingURLs.values()])
-
+        self.incomingURLs.clear()
         return chosen
             
     def updateURLs(self, c, retrievedURLs, retrievedURLsWD, iteration):
@@ -286,7 +286,7 @@ class Container:
         # If True: debug
         self.debug = False 
         
-        self.offUnwantedPrints = False
+        self.offUnwantedPrints = True
         
 def main():
 
