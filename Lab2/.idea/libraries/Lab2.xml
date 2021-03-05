@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Lab2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/tika-app-1.17.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Exercise1.zip!/" />
+      <root url="jar://$PROJECT_DIR$/documents.zip!/" />
+      <root url="jar://$PROJECT_DIR$/pdfbox-2.0.8.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
