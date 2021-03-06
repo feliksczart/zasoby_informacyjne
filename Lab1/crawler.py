@@ -106,6 +106,8 @@ class LIFO_Cycle_Policy:
         self.fetched = set([])
 
     def getURL(self, c, iteration):
+
+
         self.queue = [x for x in self.queue if x != []]
 
         if len(self.queue) == 0:
@@ -159,71 +161,95 @@ class LIFO_Authority_Policy:
         self.queue = c.seedURLs.copy()
         self.fetched = set([])
         self.incomingURLs = {}
+        self.authDone = False
+        self.queuePointed = c.seedURLs.copy()
+
 
     def getURL(self, c, iteration):
 
+        # print(self.queue, "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOooooooooooooooooooo")
         self.queue = [x for x in self.queue if x != []]
 
         if len(self.queue) == 0:
+            self.authDone = True
             self.queue, self.fetched = refill(c)
-            
+
+
         self.queue = [x for x in self.queue if x != []]
 
         if array(self.queue).ndim > 1:
-            
+
             while array(self.queue).ndim != 1:
                 self.queue = list(chain.from_iterable(self.queue))
-            
             try:
                 while self.queue[-1] in self.fetched:
                     del self.queue[-1]
 
                 last = self.queue[-1]
                 self.fetched.add(last)
+
+                for i in self.queue:
+                    try:
+                        self.incomingURLs[i] += 1
+                    except:
+                        self.incomingURLs[i] = 1
                 del self.queue[-1]
             except:
                 last = c.generatePolicy.getURL(c,iteration)
-        
+
         else:
-            try: 
+            try:
                 if isinstance(self.queue[-1], list):
                     self.queue[-1] = self.queue[-1][0]
-                
+
                 while self.queue[-1] in self.fetched:
                     del self.queue[-1]
-            
                 last = self.queue[-1]
                 self.fetched.add(last)
+
+                for i in self.queue:
+                    try:
+                        self.incomingURLs[i] += 1
+                    except:
+                        self.incomingURLs[i] = 1
                 del self.queue[-1]
             except:
                 last = c.generatePolicy.getURL(c,iteration)
 
         if isinstance(last, list):
             last = last[0]
-        
-        for i in self.fetched:
-            x = ""
-            if i not in self.incomingURLs.keys():
-                j = i[::-1]
-                j = j.split('/')
-                j = j[0].split('.')
-                try:
-                    for k in j[1][::-1]:
-                        if k == "s":
-                            continue
-                        else:
-                            x += k
-                except:
-                    pass
-                self.incomingURLs[i] = int(k)+1
 
-        #print(self.incomingURLs)
-        chosen = numpy.random.choice(list(self.incomingURLs.keys()),p = [x/sum(self.incomingURLs.values()) for x in self.incomingURLs.values()])
-        self.incomingURLs.clear()
+        # for i in self.fetched:
+        #     x = ""
+        #     if i not in self.incomingURLs.keys():
+        #         j = i[::-1]
+        #         j = j.split('/')
+        #         j = j[0].split('.')
+        #         try:
+        #             for k in j[1][::-1]:
+        #                 if k == "s":
+        #                     continue
+        #                 else:
+        #                     x += k
+        #         except:
+        #             pass
+        #         self.incomingURLs[i] = int(k)+1
+        # print(c.URLs,"urlssssss")
+        # print(c.seedURLs, "SEEEEDurlssssss")
+        # print(last,"last")
+        print(self.queuePointed,"queuePointed")
+        # print(self.incomingURLs,"yuuuuuuuuuuuuuuuuuuuuuuuuuu")
+        # chosen = numpy.random.choice(list(self.incomingURLs.keys()),p = [x/sum(self.incomingURLs.values()) for x in self.incomingURLs.values()])
+        # self.incomingURLs.clear()
+        chosen = last
+        print(chosen, "chosen")
         return chosen
-            
+
     def updateURLs(self, c, retrievedURLs, retrievedURLsWD, iteration):
         sorted_retURLs = list(retrievedURLs.copy())
+        if self.authDone is False:
+            self.queuePointed += sorted_retURLs
+
         sorted_retURLs.sort(key=lambda url: url[len(url) - url[::-1].index('/'):])
         self.queue.append(sorted_retURLs)
         pass
@@ -266,7 +292,7 @@ class Container:
         # Page (URL) to be fetched next
         self.toFetch = None
         # Number of iterations of a crawler. 
-        self.iterations = 50
+        self.iterations = 10
 
         # If true: store all crawled html pages in the provided directory.
         self.storePages = True
