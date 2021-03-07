@@ -218,7 +218,10 @@ class LIFO_Authority_Policy:
         if isinstance(last, list):
             last = last[0]
 
-        chosen = numpy.random.choice(list(self.incomingURLs.keys()),p = [x/sum(self.incomingURLs.values()) for x in self.incomingURLs.values()])
+        if self.authDone is True:
+            chosen = numpy.random.choice(list(self.incomingURLs.keys()),p = [x/sum(self.incomingURLs.values()) for x in self.incomingURLs.values()])
+        else:
+            chosen = last
 
         return chosen
 
@@ -231,7 +234,7 @@ class LIFO_Authority_Policy:
             self.queuePointed += sorted_retURLs
             for i in sorted_retURLs:
                 if i not in self.incomingURLs.keys():
-                    self.incomingURLs[i] = 1
+                    self.incomingURLs[i] = 2
                 else:
                     self.incomingURLs[i] += 1
         pass
@@ -595,7 +598,7 @@ def show_beauty_trace(trace):
             pass
     print()
     if authority:
-        print(counts)
+        print(counts, "counts")
 
 if __name__ == "__main__":
     main()
