@@ -18,6 +18,7 @@ from numpy import array
 from itertools import chain
 
 trace = []
+authority = False
 #-------------------------------------------------------------------------
 ### generatePolicy classes
 
@@ -162,12 +163,13 @@ class LIFO_Authority_Policy:
         self.fetched = set([])
         self.incomingURLs = {}
         self.authDone = False
-        self.queuePointed = c.seedURLs.copy()
+        self.queuePointed = []
+        global authority 
+        authority = True
 
 
     def getURL(self, c, iteration):
 
-        # print(self.queue, "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOooooooooooooooooooo")
         self.queue = [x for x in self.queue if x != []]
 
         if len(self.queue) == 0:
@@ -189,9 +191,7 @@ class LIFO_Authority_Policy:
                 self.fetched.add(last)
 
                 for i in self.queue:
-                    try:
-                        self.incomingURLs[i] += 1
-                    except:
+                    if i not in self.incomingURLs.keys():
                         self.incomingURLs[i] = 1
                 del self.queue[-1]
             except:
@@ -208,10 +208,9 @@ class LIFO_Authority_Policy:
                 self.fetched.add(last)
 
                 for i in self.queue:
-                    try:
-                        self.incomingURLs[i] += 1
-                    except:
+                    if i not in self.incomingURLs.keys():
                         self.incomingURLs[i] = 1
+                
                 del self.queue[-1]
             except:
                 last = c.generatePolicy.getURL(c,iteration)
@@ -219,39 +218,22 @@ class LIFO_Authority_Policy:
         if isinstance(last, list):
             last = last[0]
 
-        # for i in self.fetched:
-        #     x = ""
-        #     if i not in self.incomingURLs.keys():
-        #         j = i[::-1]
-        #         j = j.split('/')
-        #         j = j[0].split('.')
-        #         try:
-        #             for k in j[1][::-1]:
-        #                 if k == "s":
-        #                     continue
-        #                 else:
-        #                     x += k
-        #         except:
-        #             pass
-        #         self.incomingURLs[i] = int(k)+1
-        # print(c.URLs,"urlssssss")
-        # print(c.seedURLs, "SEEEEDurlssssss")
-        # print(last,"last")
-        print(self.queuePointed,"queuePointed")
-        # print(self.incomingURLs,"yuuuuuuuuuuuuuuuuuuuuuuuuuu")
-        # chosen = numpy.random.choice(list(self.incomingURLs.keys()),p = [x/sum(self.incomingURLs.values()) for x in self.incomingURLs.values()])
-        # self.incomingURLs.clear()
-        chosen = last
-        print(chosen, "chosen")
+        chosen = numpy.random.choice(list(self.incomingURLs.keys()),p = [x/sum(self.incomingURLs.values()) for x in self.incomingURLs.values()])
+
         return chosen
 
     def updateURLs(self, c, retrievedURLs, retrievedURLsWD, iteration):
         sorted_retURLs = list(retrievedURLs.copy())
-        if self.authDone is False:
-            self.queuePointed += sorted_retURLs
-
         sorted_retURLs.sort(key=lambda url: url[len(url) - url[::-1].index('/'):])
         self.queue.append(sorted_retURLs)
+        
+        if self.authDone is False:
+            self.queuePointed += sorted_retURLs
+            for i in sorted_retURLs:
+                if i not in self.incomingURLs.keys():
+                    self.incomingURLs[i] = 1
+                else:
+                    self.incomingURLs[i] += 1
         pass
 
 def refill(c):
@@ -292,7 +274,7 @@ class Container:
         # Page (URL) to be fetched next
         self.toFetch = None
         # Number of iterations of a crawler. 
-        self.iterations = 10
+        self.iterations = 50
 
         # If true: store all crawled html pages in the provided directory.
         self.storePages = True
@@ -595,16 +577,25 @@ def storeIncomingURLs(c):
         f.close()
 
 def show_beauty_trace(trace):
+    global authority
     print("\nTrace: ",end="")
+    counts = {}
     for i in trace:
         i = i[::-1]
         i = i.split('/')
         i = i[0].split('.')
         try:
             print(i[1][::-1], end=" ")
+            if authority:
+                if i[1][::-1] not in counts:
+                    counts[i[1][::-1]] = 1
+                else:
+                    counts[i[1][::-1]] += 1
         except:
             pass
     print()
+    if authority:
+        print(counts)
 
 if __name__ == "__main__":
     main()
