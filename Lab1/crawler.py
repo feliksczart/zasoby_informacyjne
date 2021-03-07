@@ -4,6 +4,10 @@
 # Institute of Computing Science
 # Laboratory of Intelligent Decision Support Systems
 #-------------------------------------------------------------------------
+# WYKONALI:
+#   - Feliks Czart 141205
+#   - Jerzy Weber 140801
+#-------------------------------------------------------------------------
 # ODPOWIEDZI:
 #   e1b7: Because there are 2 links on the s3.html page which link to itself.
 #-------------------------------------------------------------------------
