@@ -37,7 +37,7 @@ public class Exercise1
         LinkedList <String> results = new LinkedList <>();
 
         // TODO
-        ZipFile file = new ZipFile("Exercise1.zip") ;
+        ZipFile file = new ZipFile("zips/Exercise1.zip") ;
         Enumeration entries = file.entries();
         while (entries.hasMoreElements()) {
             ZipEntry entry = (ZipEntry) entries.nextElement();
