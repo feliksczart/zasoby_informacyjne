@@ -1,6 +1,6 @@
 //Odpowiedzi:
 //    e1a4 - some of the phone numbers were not found by the method
-//        because they are neither in pdf nor in xml
+//        because numbers in xml have wrong tag
 
 import org.apache.pdfbox.cos.COSDocument;
 import org.apache.pdfbox.pdfparser.PDFParser;
