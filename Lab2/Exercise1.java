@@ -2,11 +2,19 @@
 //    e1a4 - some of the phone numbers were not found by the method
 //        because numbers in xml have wrong tag
 
+
 import org.apache.pdfbox.cos.COSDocument;
 import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.tika.exception.TikaException;
+import org.apache.tika.io.TikaInputStream;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.AutoDetectParser;
+import org.apache.tika.parser.ParseContext;
+import org.apache.tika.parser.Parser;
+import org.apache.tika.sax.BodyContentHandler;
+import org.apache.tika.sax.PhoneExtractingContentHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -16,8 +24,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,13 +42,13 @@ public class Exercise1
 
     private void run() throws ParserConfigurationException, SAXException, IOException, TikaException
     {
-        LinkedList <String> phonesByTwoParses = exercise1a();
+//        LinkedList <String> phonesByTwoParses = exercise1a();
         System.out.println("Results of the two parses:");
-        printResults(phonesByTwoParses);
+//        printResults(phonesByTwoParses);
 
         LinkedList <String> phonesByTika = exercise1b();
         System.out.println("Results of Tika:");
-        //printResults(phonesByTika);
+        printResults(phonesByTika);
     }
 
 
@@ -104,7 +111,35 @@ public class Exercise1
         LinkedList <String> results = new LinkedList <>();
         // TODO
 
-        return new LinkedList <>(results);
+        Parser parser = new AutoDetectParser();
+        Metadata md = new Metadata();
+        PhoneExtractingContentHandler handler = new PhoneExtractingContentHandler(new BodyContentHandler(), md);
+        InputStream stream = null;
+        try {
+            stream = TikaInputStream.get(new File("zips/Exercise1.zip"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            parser.parse(stream, handler, md, new ParseContext());
+        }catch (IOException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (TikaException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        String[] numbers = md.getValues("phonenumbers");
+        for (String number : numbers) {
+            results.add(number);
+        }
+        return results;
     }
 
 
