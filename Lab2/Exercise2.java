@@ -18,7 +18,10 @@ import java.nio.file.attribute.UserPrincipal;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Spliterator;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class Exercise2 {
 
@@ -36,8 +39,6 @@ public class Exercise2 {
                 Files.createDirectory(Paths.get("./outputDocuments"));
             }
 
-            initLangDetector();
-
             File directory = new File("./documents/ok");
             File[] files = directory.listFiles();
             assert files != null;
@@ -52,15 +53,50 @@ public class Exercise2 {
 
     }
 
-    private void initLangDetector() throws IOException {
-        // TODO initialize language detector (langDetector)
-    }
-
     private void processFile(File file) throws IOException, SAXException, TikaException {
         // TODO: extract content, metadata and language from given file
         // call saveResult method to save the data
 
-        saveResult(file.getName(), getLanguage(file), getCreator(file), getCreationDate(file), getLastModification(file), getMime(file), getContent(file)); //TODO: fill with proper values
+        String extension = "";
+        int i = file.getName().lastIndexOf('.');
+        if (i > 0) {
+            extension = file.getName().substring(i + 1);
+        }
+        if (extension.equals("zip")) {
+            ZipFile zipFile = new ZipFile("./documents/check/" + file.getName());
+            Enumeration entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = (ZipEntry) entries.nextElement();
+
+                processZipFile(entry);
+            }
+        } else {
+
+            saveResult(file.getName(), getLanguage(file), getCreator(file), getCreationDate(file), getLastModification(file), getMime(file), getContent(file)); //TODO: fill with proper values
+        }
+    }
+
+    private void processZipFile(ZipEntry file) throws IOException, SAXException, TikaException {
+        // TODO: extract content, metadata and language from given file
+        // call saveResult method to save the data
+
+//        String extension = "";
+//        int i = file.getName().lastIndexOf('.');
+//        if (i > 0) {
+//            extension = file.getName().substring(i + 1);
+//        }
+//        if (extension.equals("zip")) {
+//            ZipFile zipFile = new ZipFile("./documents/check/" + file.getName());
+//            Enumeration entries = zipFile.entries();
+//            while (entries.hasMoreElements()) {
+//                ZipEntry entry = (ZipEntry) entries.nextElement();
+//
+//                processZipFile(entry);
+//            }
+//        } else {
+//
+//            saveResult(file.getName(), getLanguage(file), getCreator(file), getCreationDate(file), getLastModification(file), getMime(file), getContent(file)); //TODO: fill with proper values
+//        }
     }
 
     private void saveResult(String fileName, String language, String creatorName, String creationDate,
