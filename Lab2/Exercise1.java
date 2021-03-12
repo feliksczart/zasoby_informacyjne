@@ -110,7 +110,6 @@ public class Exercise1
         System.out.println("Running exercise 1b...");
         LinkedList <String> results = new LinkedList <>();
         // TODO
-
         Parser parser = new AutoDetectParser();
         Metadata md = new Metadata();
         PhoneExtractingContentHandler handler = new PhoneExtractingContentHandler(new BodyContentHandler(), md);
@@ -122,23 +121,18 @@ public class Exercise1
         }
         try {
             parser.parse(stream, handler, md, new ParseContext());
-        }catch (IOException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (TikaException e) {
+        }catch (IOException | TikaException | SAXException e) {
             e.printStackTrace();
         } finally {
             try {
+                assert stream != null;
                 stream.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         String[] numbers = md.getValues("phonenumbers");
-        for (String number : numbers) {
-            results.add(number);
-        }
+        Collections.addAll(results, numbers);
         return results;
     }
 
