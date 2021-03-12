@@ -1,3 +1,4 @@
+import org.apache.tika.Tika;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.langdetect.OptimaizeLangDetector;
 import org.apache.tika.language.LanguageIdentifier;
@@ -59,7 +60,7 @@ public class Exercise2 {
         // TODO: extract content, metadata and language from given file
         // call saveResult method to save the data
 
-        saveResult(file.getName(), getLanguage(file), null, getCreationDate(file), getLastModification(file), null, null); //TODO: fill with proper values
+        saveResult(file.getName(), getLanguage(file), getCreator(file), getCreationDate(file), getLastModification(file), getMime(file), getContent(file)); //TODO: fill with proper values
     }
 
     private void saveResult(String fileName, String language, String creatorName, String creationDate,
@@ -102,11 +103,18 @@ public class Exercise2 {
         } else return null;
     }
 
-    public String getCreator(File file) throws IOException {
-        FileOwnerAttributeView ownerAttributeView = Files.getFileAttributeView(Path.of("./documents/ok"), FileOwnerAttributeView.class);
-        UserPrincipal owner = ownerAttributeView.getOwner();
-        System.out.println("owner: " + owner.getName());
-        return owner.getName();
+    public String getCreator(File file) throws IOException, TikaException, SAXException {
+
+        Parser parser = new AutoDetectParser();
+        BodyContentHandler handler = new BodyContentHandler();
+        Metadata metadata = new Metadata();
+        //System.out.println(file.getName());
+        InputStream is = new BufferedInputStream(new FileInputStream(file));
+
+        parser.parse(is, handler, metadata, new ParseContext());
+        String creator = metadata.get(Metadata.CREATOR);
+
+        return creator;
     }
 
     public String getCreationDate(File file) throws IOException, TikaException, SAXException {
@@ -148,5 +156,28 @@ public class Exercise2 {
         } catch (NullPointerException e) {
             return null;
         }
+    }
+
+    public String getMime(File file) throws IOException, TikaException, SAXException {
+        Tika tika = new Tika();
+        String mimeType = tika.detect(file);
+        return mimeType;
+    }
+
+    public String getContent(File file) throws IOException {
+        BodyContentHandler handler = new BodyContentHandler();
+        AutoDetectParser parser = new AutoDetectParser();
+        Metadata metadata = new Metadata();
+        InputStream is = new BufferedInputStream(new FileInputStream(file));
+        try {
+            parser.parse(is, handler, metadata);
+            String text = handler.toString();
+            return text;
+        } catch (SAXException | IOException | TikaException e) {
+            e.printStackTrace();
+        } finally {
+            is.close();
+        }
+        return null;
     }
 }

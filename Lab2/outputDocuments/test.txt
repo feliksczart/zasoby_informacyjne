@@ -3,6 +3,7 @@ Language: fr
 Creator: 
 Creation date: 2018-01-30
 Last modification: 2018-01-30
-MIME type: 
+MIME type: application/vnd.openxmlformats-officedocument.wordprocessingml.document
 
-null
+test file content
+
