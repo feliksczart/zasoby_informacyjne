@@ -1,3 +1,7 @@
+import org.apache.pdfbox.cos.COSDocument;
+import org.apache.pdfbox.pdfparser.PDFParser;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.tika.exception.TikaException;
 import org.xml.sax.SAXException;
 
@@ -7,6 +11,8 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -42,7 +48,22 @@ public class Exercise1
         while (entries.hasMoreElements()) {
             ZipEntry entry = (ZipEntry) entries.nextElement();
             InputStream stream = file.getInputStream(entry);
-            results.add(String.valueOf(stream));
+
+            String extension = "";
+            int i = entry.getName().lastIndexOf('.');
+            if (i > 0) {
+                extension = entry.getName().substring(i+1);
+            }
+            if (extension.equals("pdf")){
+                PDDocument pdDoc = PDDocument.load(stream);
+                String pdfStripper = new PDFTextStripper().getText(pdDoc);
+                System.out.println(pdfStripper);
+                Pattern pattern = Pattern.compile("\\([0−9]{3}\\)?[0−9−]+");
+                Matcher matcher = pattern.matcher(pdfStripper);
+                while(matcher.find()){
+                    String text = matcher.group();
+                }
+            }
         }
 
         return results;

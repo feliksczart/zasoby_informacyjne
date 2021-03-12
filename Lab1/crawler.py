@@ -226,7 +226,7 @@ class LIFO_Authority_Policy:
             chosen = numpy.random.choice(list(self.incomingURLs.keys()),p = [x/sum(self.incomingURLs.values()) for x in self.incomingURLs.values()])
         else:
             chosen = last
-
+        #print(self.incomingURLs)
         return chosen
 
     def updateURLs(self, c, retrievedURLs, retrievedURLsWD, iteration):
@@ -301,7 +301,7 @@ class Container:
         # If True: debug
         self.debug = False 
         
-        self.offUnwantedPrints = True
+        self.offUnwantedPrints = False
         
 def main():
 
@@ -602,7 +602,7 @@ def show_beauty_trace(trace):
             pass
     print()
     if authority:
-        print(counts, "counts")
+        print("Counts: ",counts)
 
 if __name__ == "__main__":
     main()
