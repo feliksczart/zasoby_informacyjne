@@ -1,8 +1,8 @@
 Name: 4.pptx
 Language: en
 Creator: 
-Creation date: 
-Last modification: 
+Creation date: 2012-04-16
+Last modification: 2012-04-16
 MIME type: 
 
 null

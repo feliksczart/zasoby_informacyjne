@@ -15,7 +15,9 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.FileOwnerAttributeView;
 import java.nio.file.attribute.UserPrincipal;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Spliterator;
 
 public class Exercise2 {
 
@@ -120,9 +122,10 @@ public class Exercise2 {
 //        System.out.println("Creation Date: " + creationDate);
 
         try {
-            String date = metadata.get(creationDate.substring(0, Math.min(creationDate.length(), 10)));
+            String[] parts = creationDate.split("T");
+            String date = parts[0];
             return date;
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -137,12 +140,12 @@ public class Exercise2 {
 
         parser.parse(is, handler, metadata, new ParseContext());
         String lastModifiedDate = metadata.get(Metadata.LAST_MODIFIED);
-        System.out.println("Last Modification Date: " + lastModifiedDate);
 
         try {
-            String date = metadata.get(lastModifiedDate.substring(0, Math.min(lastModifiedDate.length(), 10)));
+            String[] parts = lastModifiedDate.split("T");
+            String date = parts[0];
             return date;
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return null;
         }
     }
