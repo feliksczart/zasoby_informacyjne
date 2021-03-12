@@ -1,10 +1,9 @@
 //Odpowiedzi:
 //    e1a4 - some of the phone numbers were not found by the method
-//        because numbers in xml have wrong tag
+//           because numbers in xml have wrong tag
+//    e1b5 - one of the reasons which we can see is that PhoneExtracingContentHandler
+//           can ignore not a valid phone numbers
 
-
-import org.apache.pdfbox.cos.COSDocument;
-import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.tika.exception.TikaException;
@@ -16,9 +15,6 @@ import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.apache.tika.sax.PhoneExtractingContentHandler;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -42,9 +38,9 @@ public class Exercise1
 
     private void run() throws ParserConfigurationException, SAXException, IOException, TikaException
     {
-//        LinkedList <String> phonesByTwoParses = exercise1a();
+        LinkedList <String> phonesByTwoParses = exercise1a();
         System.out.println("Results of the two parses:");
-//        printResults(phonesByTwoParses);
+        printResults(phonesByTwoParses);
 
         LinkedList <String> phonesByTika = exercise1b();
         System.out.println("Results of Tika:");
@@ -70,7 +66,7 @@ public class Exercise1
                 extension = entry.getName().substring(i+1);
             }
             if (extension.equals("pdf")){
-                System.out.println("PDF:");
+                //System.out.println("PDF:");
                 PDDocument pdDoc = PDDocument.load(stream);
                 String pdfStripper = new PDFTextStripper().getText(pdDoc);
 //                System.out.println(pdfStripper); //pdf content line
@@ -79,11 +75,11 @@ public class Exercise1
                 Matcher matcher = pattern.matcher(pdfStripper);
                 while(matcher.find()){
                     String text = matcher.group();
-                    System.out.println("  "+text);
+                    //System.out.println("  "+text);
                     results.add(text);
                 }
             } else if (extension.equals("xml")){
-                System.out.println("XML:");
+                //System.out.println("XML:");
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                 DocumentBuilder db = dbf.newDocumentBuilder();
                 Document doc = db.parse(stream);
@@ -92,7 +88,7 @@ public class Exercise1
                 while (true){
                     try {
                         content = doc.getElementsByTagName("Phone").item(index).getTextContent();
-                        System.out.println("  "+content);
+                        //System.out.println("  "+content);
                         results.add(content);
                         index++;
                     } catch (NullPointerException npe){
@@ -107,7 +103,7 @@ public class Exercise1
 
     private LinkedList <String> exercise1b() throws IOException, TikaException, SAXException
     {
-        System.out.println("Running exercise 1b...");
+        System.out.println("\nRunning exercise 1b...");
         LinkedList <String> results = new LinkedList <>();
         // TODO
         Parser parser = new AutoDetectParser();
@@ -121,7 +117,7 @@ public class Exercise1
         }
         try {
             parser.parse(stream, handler, md, new ParseContext());
-        }catch (IOException | TikaException | SAXException e) {
+        }catch (IOException | TikaException e) {
             e.printStackTrace();
         } finally {
             try {
