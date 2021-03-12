@@ -57,11 +57,13 @@ public class Exercise1
             if (extension.equals("pdf")){
                 PDDocument pdDoc = PDDocument.load(stream);
                 String pdfStripper = new PDFTextStripper().getText(pdDoc);
-                System.out.println(pdfStripper);
-                Pattern pattern = Pattern.compile("\\([0−9]{3}\\)?[0−9−]+");
+//                System.out.println(pdfStripper); //pdf content line
+                String patternString = "\\([0-9]{3}\\) ?[0-9-]+";
+                Pattern pattern = Pattern.compile(patternString);
                 Matcher matcher = pattern.matcher(pdfStripper);
                 while(matcher.find()){
                     String text = matcher.group();
+                    System.out.println(text);
                 }
             }
         }
