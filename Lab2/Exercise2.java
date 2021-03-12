@@ -10,7 +10,10 @@ import org.xml.sax.SAXException;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileOwnerAttributeView;
+import java.nio.file.attribute.UserPrincipal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -54,11 +57,11 @@ public class Exercise2 {
         // TODO: extract content, metadata and language from given file
         // call saveResult method to save the data
 
-        saveResult(file.getName(), getLanguage(file), null, null, null, null, null); //TODO: fill with proper values
+        saveResult(file.getName(), getLanguage(file), null, getCreationDate(file), getLastModification(file), null, null); //TODO: fill with proper values
     }
 
-    private void saveResult(String fileName, String language, String creatorName, Date creationDate,
-                            Date lastModification, String mimeType, String content) {
+    private void saveResult(String fileName, String language, String creatorName, String creationDate,
+                            String lastModification, String mimeType, String content) {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
         int index = fileName.lastIndexOf(".");
@@ -68,9 +71,9 @@ public class Exercise2 {
             printWriter.write("Name: " + fileName + "\n");
             printWriter.write("Language: " + (language != null ? language : "") + "\n");
             printWriter.write("Creator: " + (creatorName != null ? creatorName : "") + "\n");
-            String creationDateStr = creationDate == null ? "" : dateFormat.format(creationDate);
+            String creationDateStr = creationDate == null ? "" : creationDate;
             printWriter.write("Creation date: " + creationDateStr + "\n");
-            String lastModificationStr = lastModification == null ? "" : dateFormat.format(lastModification);
+            String lastModificationStr = lastModification == null ? "" : lastModification;
             printWriter.write("Last modification: " + lastModificationStr + "\n");
             printWriter.write("MIME type: " + (mimeType != null ? mimeType : "") + "\n");
             printWriter.write("\n");
@@ -92,9 +95,55 @@ public class Exercise2 {
             parser.parse(content, handler, metadata, new ParseContext());
 
             LanguageIdentifier object = new LanguageIdentifier(handler.toString());
-            System.out.println(file + " Language name: " + object.getLanguage());
+            //System.out.println(file + " Language name: " + object.getLanguage());
             return object.getLanguage();
+        } else return null;
+    }
+
+    public String getCreator(File file) throws IOException {
+        FileOwnerAttributeView ownerAttributeView = Files.getFileAttributeView(Path.of("./documents/ok"), FileOwnerAttributeView.class);
+        UserPrincipal owner = ownerAttributeView.getOwner();
+        System.out.println("owner: " + owner.getName());
+        return owner.getName();
+    }
+
+    public String getCreationDate(File file) throws IOException, TikaException, SAXException {
+
+        Parser parser = new AutoDetectParser();
+        BodyContentHandler handler = new BodyContentHandler();
+        Metadata metadata = new Metadata();
+        //System.out.println(file.getName());
+        InputStream is = new BufferedInputStream(new FileInputStream(file));
+
+        parser.parse(is, handler, metadata, new ParseContext());
+        String creationDate = metadata.get(Metadata.CREATION_DATE);
+//        System.out.println("Creation Date: " + creationDate);
+
+        try {
+            String date = metadata.get(creationDate.substring(0, Math.min(creationDate.length(), 10)));
+            return date;
+        }catch (NullPointerException e){
+            return null;
         }
-        else return null;
+    }
+
+    public String getLastModification(File file) throws IOException, TikaException, SAXException {
+
+        Parser parser = new AutoDetectParser();
+        BodyContentHandler handler = new BodyContentHandler();
+        Metadata metadata = new Metadata();
+        //System.out.println(file.getName());
+        InputStream is = new BufferedInputStream(new FileInputStream(file));
+
+        parser.parse(is, handler, metadata, new ParseContext());
+        String lastModifiedDate = metadata.get(Metadata.LAST_MODIFIED);
+        System.out.println("Last Modification Date: " + lastModifiedDate);
+
+        try {
+            String date = metadata.get(lastModifiedDate.substring(0, Math.min(lastModifiedDate.length(), 10)));
+            return date;
+        }catch (NullPointerException e){
+            return null;
+        }
     }
 }

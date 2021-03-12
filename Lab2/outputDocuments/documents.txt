@@ -1,8 +1,0 @@
-Name: documents.zip
-Language: 
-Creator: 
-Creation date: 
-Last modification: 
-MIME type: 
-
-null

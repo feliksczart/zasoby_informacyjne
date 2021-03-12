@@ -1,8 +1,0 @@
-Name: docs.zip
-Language: no
-Creator: 
-Creation date: 
-Last modification: 
-MIME type: 
-
-null
