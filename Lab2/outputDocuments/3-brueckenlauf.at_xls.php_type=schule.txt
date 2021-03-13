@@ -1,0 +1,64 @@
+Name: 3-brueckenlauf.at_xls.php_type=schule.xls
+Language: no
+Creator: hof
+Creation date: 2009-03-16
+Last modification: 2014-02-20
+MIME type: 
+
+Tabelle1
+	Anmeldung zum 26. Internationalen Linzer 3-Brückenlauf
+	am 26.04.2014
+	
+			Senden Sie das fertig ausgefüllte Formular an office@3-brueckenlauf.at oder nutzen Sie unsere direkte
+			Onlineanmeldung unter www.3-brueckenlauf.at/ooe-schulercup
+			Nennschluss: Montag, 21. April 2014 - 15 Uhr
+	
+			SCHULE:
+	
+			Kontaktperson:
+			Vorname	Nachname	Adresse		Tel-Nr.	E-Mail
+	
+	
+			Läuferdaten:
+			Nachname	Vorname	Geb.Jahr	Geschl.
+		1
+		2
+		3
+		4
+		5
+		6
+		7
+		8
+		9
+		10
+		11
+		12
+		13
+		14
+		15
+		16
+		17
+		18
+		19
+		20
+		21
+		22
+		23
+		24
+		25
+		26
+		27
+		28
+		29
+		30
+
+
+Tabelle2
+	
+
+
+Tabelle3
+	
+
+
+
