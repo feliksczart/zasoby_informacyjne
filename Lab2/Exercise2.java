@@ -11,22 +11,12 @@ import org.xml.sax.SAXException;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.FileOwnerAttributeView;
-import java.nio.file.attribute.UserPrincipal;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.Enumeration;
-import java.util.Spliterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class Exercise2 {
-
-    private static final String DATE_FORMAT = "yyyy-MM-dd";
-    private OptimaizeLangDetector langDetector;
 
     public static void main(String[] args) {
         Exercise2 exercise = new Exercise2();
@@ -39,7 +29,7 @@ public class Exercise2 {
                 Files.createDirectory(Paths.get("./outputDocuments"));
             }
 
-            File directory = new File("./documents/ok");
+            File directory = new File("./documents");
             File[] files = directory.listFiles();
             assert files != null;
             for (File file : files) {
@@ -63,14 +53,14 @@ public class Exercise2 {
             extension = file.getName().substring(i + 1);
         }
         if (extension.equals("zip")) {
-            ZipFile zipFile = new ZipFile("./documents/ok/" + file.getName());
+            ZipFile zipFile = new ZipFile("./documents/" + file.getName());
             Enumeration entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = (ZipEntry) entries.nextElement();
 
                 new ZipEntryProcess(entry, zipFile);
             }
-        } else {
+        } else if (file.isFile()){
 
             saveResult(file.getName(), getLanguage(file), getCreator(file), getCreationDate(file), getLastModification(file), getMime(file), getContent(file)); //TODO: fill with proper values
         }
@@ -114,7 +104,7 @@ public class Exercise2 {
                 //System.out.println(file + " Language name: " + object.getLanguage());
                 return object.getLanguage();
             } else return null;
-        } catch (NullPointerException | TikaException e){
+        } catch (NullPointerException | TikaException e) {
             return null;
         }
     }
@@ -210,7 +200,7 @@ public class Exercise2 {
                 extension = file.getName().substring(i + 1);
             }
             if (extension.equals("zip")) {
-                ZipFile zipFile = new ZipFile("./documents/ok/" + file.getName());
+                ZipFile zipFile = new ZipFile("./documents/" + file.getName());
                 Enumeration entries = zipFile.entries();
                 while (entries.hasMoreElements()) {
                     ZipEntry entry = (ZipEntry) entries.nextElement();
@@ -252,7 +242,7 @@ public class Exercise2 {
             BodyContentHandler handler = new BodyContentHandler();
             Metadata metadata = new Metadata();
 
-            try{
+            try {
                 if (!file.isDirectory()) {
                     InputStream content = zf.getInputStream(file);
                     //Parsing the given document
@@ -262,7 +252,7 @@ public class Exercise2 {
                     //System.out.println(file + " Language name: " + object.getLanguage());
                     return object.getLanguage();
                 } else return null;
-            }  catch (NullPointerException | TikaException e){
+            } catch (NullPointerException | TikaException e) {
                 return null;
             }
         }
