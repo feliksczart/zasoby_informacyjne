@@ -1,6 +1,10 @@
+import com.github.junrar.Archive;
+import com.github.junrar.exception.RarException;
+import com.github.junrar.impl.FileVolumeManager;
+import com.github.junrar.rarfile.FileHeader;
+import com.github.junrar.vfs2.provider.rar.RARFileObject;
 import org.apache.tika.Tika;
 import org.apache.tika.exception.TikaException;
-import org.apache.tika.langdetect.OptimaizeLangDetector;
 import org.apache.tika.language.LanguageIdentifier;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
@@ -12,27 +16,37 @@ import org.xml.sax.SAXException;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class Exercise2 {
 
+    public ArrayList<String> extractedRars = new ArrayList<>();
+
     public static void main(String[] args) {
         Exercise2 exercise = new Exercise2();
-        exercise.run();
+        exercise.run(0);
     }
 
-    private void run() {
+    private void run(int rar) {
         try {
             if (!new File("./outputDocuments").exists()) {
                 Files.createDirectory(Paths.get("./outputDocuments"));
             }
 
-            File directory = new File("./documents");
+            File directory;
+
+            if (rar == 1) directory = new File("./documents/rars");
+            else directory = new File("./documents");
+
             File[] files = directory.listFiles();
             assert files != null;
             for (File file : files) {
+//                if (!extractedRars.contains(file.getName())) {
+//                    processFile(file);
+//                }
                 processFile(file);
             }
 
@@ -60,7 +74,41 @@ public class Exercise2 {
 
                 new ZipEntryProcess(entry, zipFile);
             }
-        } else if (file.isFile()){
+
+//        } else if (extension.equals("rar")) {
+//            Archive a = null;
+//            try {
+//                a = new Archive(new FileVolumeManager(file));
+//            } catch (RarException | IOException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//            if (a != null) {
+//                a.getMainHeader().print();
+//                FileHeader fh = a.nextFileHeader();
+//                while (fh != null) {
+//                    try {
+//                        File out = new File("./documents/rars/"
+//                                + fh.getFileNameString().trim());
+//                        //System.out.println(out.getAbsolutePath());
+//                        if(fh.getFileNameString().contains(".rar")){
+//                            processFile(out);
+//                        }
+//                        extractedRars.add(fh.getFileNameString());
+//                        FileOutputStream os = new FileOutputStream(out);
+//                        a.extractFile(fh, os);
+//                        os.close();
+//                    } catch (RarException | IOException e) {
+//                        // TODO Auto-generated catch block
+//                        e.printStackTrace();
+//                    }
+//                    fh = a.nextFileHeader();
+//                }
+//            }
+//            run(1);
+
+
+        } else if (file.isFile()) {
 
             saveResult(file.getName(), getLanguage(file), getCreator(file), getCreationDate(file), getLastModification(file), getMime(file), getContent(file)); //TODO: fill with proper values
         }
@@ -248,9 +296,9 @@ public class Exercise2 {
                     //Parsing the given document
                     parser.parse(content, handler, metadata, new ParseContext());
 
-                    LanguageIdentifier object = new LanguageIdentifier(handler.toString());
-                    //System.out.println(file + " Language name: " + object.getLanguage());
-                    return object.getLanguage();
+                    LanguageIdentifier language = new LanguageIdentifier(handler.toString());
+                    System.out.println(file + " Language name: " + language.getLanguage());
+                    return language.getLanguage();
                 } else return null;
             } catch (NullPointerException | TikaException e) {
                 return null;

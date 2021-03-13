@@ -1,0 +1,37 @@
+Name: www.wifo.ac.at_jart_prj3_wifo_widat_wirtschaftsdaten_e_11.1_e_out.xlsx_r=jnds.xlsx
+Language: no
+Creator: boehs
+Creation date: 2017-08-23
+Last modification: 2017-08-23
+MIME type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+
+11.1_e_out
+	1/1/14	1/1/15	1/1/16	7/1/16	10/1/16	1/1/17	4/1/17	2/1/17	3/1/17	4/1/17	5/1/17	6/1/17	7/1/17
+	11.1 Freight and passenger transport
+	2014	2015	2016	3Q2016	4Q2016	1Q2017	2Q2017	Feb 2017	Mar 2017	Apr 2017	May 2017	Jun 2017	Jul 2017
+	Freight transport
+	Transport performance
+	Road                                                               Mill. tkm	16,605	17,161	18,091	4,355	3,903	.	.	.	.	.	.	.	.
+	Rail                                                                  Mill. tkm	19,245	19,045	18,883	4,637	4,968	5,472	.	.	.	.	.	.	.
+	Aviation1                                                         Mill. kg	424	421	432	107	114	102	.	32	40	.	.	.	.
+	Inland Waterways                                       Mill. tkm	9,868	8,332	9,274	2,359	2,117	1,442	.	407	749	779	.	.	.
+	Heavy good vehicle kilometrage2               Mill. km	3,268	3,335	3,496	907	863	861	920	272	329	286	322	312	313
+	Heavy good vehicle registrations3             Number	12,954	14,035	16,295	4,280	3,541	4,635	5,038	1,268	2,227	1,687	1,652	1,699	1,548
+	Passenger transport
+	Road (car registrations)                                 Number	303,318	308,555	329,604	80,408	77,426	88,493	98,068	25,311	36,830	30,201	32,426	35,441	27,731
+	Railway                              Mill. passenger kilometres	10,700	10,700	.	.	.	.	.	.	.	.	.	.	.
+	Luftverkehr4                                      1,000 passengers	26,859	27,185	27,594	8,254	6,501	6,069	.	1,905	2,245	.	.	.	.
+	Labour market, transporting and storage
+	Employees                                                         Persons   	183,594	186,379	188,806	189,207	189,868	193,050	190,564	193,433	194,514	189,891	190,030	191,772	194,293
+	Unemployed                                                     Persons	15,355	16,585	16,848	15,279	16,823	18,465	16,392	19,120	16,809	17,356	16,719	15,100	15,014
+	Vacancies                                                         Persons	855	895	1,281	1,350	1,367	1,716	2,172	1,678	1,902	2,012	2,115	2,388	2,527
+	Fuel prices
+	Diesel                                                         Euro per litre	1.30	1.12	1.03	1.04	1.09	1.13	1.09	1.13	1.11	1.11	1.09	1.07	1.06
+	Standard unleaded petrol                     Euro per litre	1.34	1.20	1.11	1.11	1.14	1.18	1.17	1.19	1.16	1.19	1.18	1.16	1.14
+	Source: Statistics Austria, BMWFW, WDS - WIFO Data System, Macrobond. – 1 Freight and postal volumes. –  2 HGV over 3.5 t on tolled motorway network. – 3 HGV with 1 t load capacity or above. – 4 Arrivals and departures.
+	Michael.Weingaertler@wifo.ac.at
+	2017
+
+
+mailto:Michael.Weingaertler@wifo.ac.athtto://www.wifo.ac.at/http://www.wifo.ac.at/jart/prj3/wifo/main.jart?rel=en
+
