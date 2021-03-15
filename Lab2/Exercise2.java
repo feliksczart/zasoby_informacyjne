@@ -80,7 +80,7 @@ public class Exercise2 {
 //            try {
 //                a = new Archive(new FileVolumeManager(file));
 //            } catch (RarException | IOException e) {
-//                // TODO Auto-generated catch block
+//
 //                e.printStackTrace();
 //            }
 //            if (a != null) {
@@ -99,7 +99,7 @@ public class Exercise2 {
 //                        a.extractFile(fh, os);
 //                        os.close();
 //                    } catch (RarException | IOException e) {
-//                        // TODO Auto-generated catch block
+//
 //                        e.printStackTrace();
 //                    }
 //                    fh = a.nextFileHeader();
@@ -297,7 +297,7 @@ public class Exercise2 {
                     parser.parse(content, handler, metadata, new ParseContext());
 
                     LanguageIdentifier language = new LanguageIdentifier(handler.toString());
-                    System.out.println(file + " Language name: " + language.getLanguage());
+                    //System.out.println(file + " Language name: " + language.getLanguage());
                     return language.getLanguage();
                 } else return null;
             } catch (NullPointerException | TikaException e) {
