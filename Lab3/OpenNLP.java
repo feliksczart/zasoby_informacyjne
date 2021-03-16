@@ -7,17 +7,24 @@
 //          as separate sentences which without them are not sufficient to be treated as a sentence
 //  e1 5c - the "like" in the first sentence should be a verb rather than a conjunction as shown in the array
 
+import opennlp.tools.chunker.ChunkerME;
+import opennlp.tools.chunker.ChunkerModel;
 import opennlp.tools.langdetect.LanguageDetectorME;
 import opennlp.tools.langdetect.LanguageDetectorModel;
+import opennlp.tools.lemmatizer.DictionaryLemmatizer;
+import opennlp.tools.namefind.NameFinderME;
+import opennlp.tools.namefind.TokenNameFinderModel;
 import opennlp.tools.postag.POSModel;
 import opennlp.tools.postag.POSTaggerME;
 import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceModel;
+import opennlp.tools.stemmer.PorterStemmer;
 import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class OpenNLP {
@@ -42,11 +49,11 @@ public class OpenNLP {
         //languageDetection();
         //tokenization();
         // sentenceDetection();
-        posTagging();
+        //posTagging();
         // lemmatization();
         // stemming();
         // chunking();
-        // nameFinding();
+        nameFinding();
     }
 
     private void languageDetection() throws IOException {
@@ -122,6 +129,18 @@ public class OpenNLP {
 
     }
 
+    private String[] tokenization(String text) throws IOException {
+        File modelFile = new File(TOKENIZER_MODEL);
+        TokenizerModel model = new TokenizerModel(modelFile);
+        TokenizerME modelME = new TokenizerME(model);
+
+        File deModelFile = new File(DE_TOKENIZER_MODEL);
+        TokenizerModel deModel = new TokenizerModel(deModelFile);
+        TokenizerME deModelME = new TokenizerME(deModel);
+
+        return modelME.tokenize(text);
+    }
+
     private void sentenceDetection() throws IOException {
         File modelFile = new File(SENTENCE_MODEL);
         SentenceModel model = new SentenceModel(modelFile);
@@ -159,6 +178,9 @@ public class OpenNLP {
     }
 
     private void lemmatization() throws IOException {
+        File modelFile = new File(LEMMATIZER_DICT);
+        DictionaryLemmatizer dict = new DictionaryLemmatizer(modelFile);
+
         String[] text = new String[0];
         text = new String[]{"Hi", "How", "are", "you", "Welcome", "to", "OpenNLP", "We", "provide", "multiple",
                 "built-in", "methods", "for", "Natural", "Language", "Processing"};
@@ -166,25 +188,46 @@ public class OpenNLP {
         tags = new String[]{"NNP", "WRB", "VBP", "PRP", "VB", "TO", "VB", "PRP", "VB", "JJ", "JJ", "NNS", "IN", "JJ",
                 "NN", "VBG"};
 
+        System.out.println(Arrays.toString(dict.lemmatize(text, tags)));
+
     }
 
     private void stemming() {
-        String[] sentence = new String[0];
-        sentence = new String[]{"Hi", "How", "are", "you", "Welcome", "to", "OpenNLP", "We", "provide", "multiple",
+        PorterStemmer porterStemmer = new PorterStemmer();
+
+        ArrayList<String> stemSentence = new ArrayList<String>();
+        String[] sentence = new String[]{"Hi", "How", "are", "you", "Welcome", "to", "OpenNLP", "We", "provide", "multiple",
                 "built-in", "methods", "for", "Natural", "Language", "Processing"};
+
+        for (String str: sentence){
+            stemSentence.add(porterStemmer.stem(str));
+        }
+
+        System.out.println(Arrays.toString(sentence));
+        System.out.println(stemSentence);
 
     }
 
     private void chunking() throws IOException {
-        String[] sentence = new String[0];
-        sentence = new String[]{"She", "put", "the", "big", "knives", "on", "the", "table"};
+        File modelFile = new File(CHUNKER_MODEL);
+        ChunkerModel model = new ChunkerModel(modelFile);
+        ChunkerME modelME = new ChunkerME(model);
 
-        String[] tags = new String[0];
-        tags = new String[]{"PRP", "VBD", "DT", "JJ", "NNS", "IN", "DT", "NN"};
+        String[] sentence = new String[]{"She", "put", "the", "big", "knives", "on", "the", "table"};
+        String[] tags = new String[]{"PRP", "VBD", "DT", "JJ", "NNS", "IN", "DT", "NN"};
 
+        System.out.println(Arrays.toString(modelME.chunk(sentence, tags)));
     }
 
     private void nameFinding() throws IOException {
+        File modelFile = new File(NAME_MODEL);
+        TokenNameFinderModel model = new TokenNameFinderModel(modelFile);
+        NameFinderME modelME = new NameFinderME(model);
+
+        File xyzModelFile = new File(ENTITY_XYZ_MODEL);
+        TokenNameFinderModel xyzModel = new TokenNameFinderModel(xyzModelFile);
+        NameFinderME xyzModelME = new NameFinderME(xyzModel);
+
         String text = "he idea of using computers to search for relevant pieces of information was popularized in the article "
                 + "As We May Think by Vannevar Bush in 1945. It would appear that Bush was inspired by patents "
                 + "for a 'statistical machine' - filed by Emanuel Goldberg in the 1920s and '30s - that searched for documents stored on film. "
@@ -195,6 +238,10 @@ public class OpenNLP {
                 + "well on small text corpora such as the Cranfield collection (several thousand documents). Large-scale retrieval systems, "
                 + "such as the Lockheed Dialog system, came into use early in the 1970s.";
 
+        String[] textArray = tokenization(text);
+        System.out.println(Arrays.toString(textArray));
+        System.out.println(Arrays.toString(modelME.find(textArray)));
+        System.out.println(Arrays.toString(xyzModelME.find(textArray)));
+        System.out.println(textArray[25]);
     }
-
 }
