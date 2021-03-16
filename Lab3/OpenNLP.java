@@ -1,10 +1,18 @@
 //ODPOWIEDZI:
-//  e12d - the probability decreases
-//  e13c - outcomes are different because of the different methods of writing numbers
-//  e13e - there are small differences in tokens probability which in both models has value less than 1.0
+//  e1 2d - the probability decreases
+//  e1 3c - outcomes are different because of the different methods of writing numbers
+//  e1 3e - there are small differences in tokens probability which in both models have value less than 1.0
+//  e1 4d - yes, very short sentences like "Hi.", aren't taken as a sentence
+//  e1 4f - punctuation or question marks cause sentences of medium length to be treated
+//          as separate sentences which without them are not sufficient to be treated as a sentence
+//  e1 5c - the "like" in the first sentence should be a verb rather than a conjunction as shown in the array
 
 import opennlp.tools.langdetect.LanguageDetectorME;
 import opennlp.tools.langdetect.LanguageDetectorModel;
+import opennlp.tools.postag.POSModel;
+import opennlp.tools.postag.POSTaggerME;
+import opennlp.tools.sentdetect.SentenceDetectorME;
+import opennlp.tools.sentdetect.SentenceModel;
 import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
 
@@ -34,7 +42,7 @@ public class OpenNLP {
         //languageDetection();
         //tokenization();
         // sentenceDetection();
-        // posTagging();
+        posTagging();
         // lemmatization();
         // stemming();
         // chunking();
@@ -115,27 +123,39 @@ public class OpenNLP {
     }
 
     private void sentenceDetection() throws IOException {
+        File modelFile = new File(SENTENCE_MODEL);
+        SentenceModel model = new SentenceModel(modelFile);
+        SentenceDetectorME modelME = new SentenceDetectorME(model);
+
         String text = "";
         text = "Hi. How are you? Welcome to OpenNLP. "
                 + "We provide multiple built-in methods for Natural Language Processing.";
-		/*text = "Hi. How are you?! Welcome to OpenNLP? "
-				+ "We provide multiple built-in methods for Natural Language Processing.";
-		text = "Hi. How are you? Welcome to OpenNLP.?? "
-				+ "We provide multiple . built-in methods for Natural Language Processing.";
-		text = "The interrobang, also known as the interabang (often represented by ?! or !?), "
-				+ "is a nonstandard punctuation mark used in various written languages. "
-				+ "It is intended to combine the functions of the question mark (?), or interrogative point, "
-				+ "and the exclamation mark (!), or exclamation point, known in the jargon of printers and programmers as a \"bang\". ";*/
+//		text = "Hi. How are you?! Welcome to OpenNLP? "
+//				+ "We provide multiple built-in methods for Natural Language Processing.";
+//		text = "Hi. How are you? Welcome to OpenNLP.?? "
+//				+ "We provide multiple . built-in methods for Natural Language Processing.";
+//		text = "The interrobang, also known as the interabang (often represented by ?! or !?), "
+//				+ "is a nonstandard punctuation mark used in various written languages. "
+//				+ "It is intended to combine the functions of the question mark (?), or interrogative point, "
+//				+ "and the exclamation mark (!), or exclamation point, known in the jargon of printers and programmers as a \"bang\". ";
 
+        System.out.println(Arrays.toString(modelME.sentDetect(text)));
+        System.out.println(Arrays.toString(modelME.getSentenceProbabilities()));
     }
 
     private void posTagging() throws IOException {
+        File modelFile = new File(POS_MODEL);
+        POSModel model = new POSModel(modelFile);
+        POSTaggerME modelME = new POSTaggerME(model);
+
         String[] sentence = new String[0];
-        sentence = new String[]{"Cats", "like", "milk"};
-		/*sentence = new String[]{"Cat", "is", "white", "like", "milk"};
-		sentence = new String[] { "Hi", "How", "are", "you", "Welcome", "to", "OpenNLP", "We", "provide", "multiple",
-				"built-in", "methods", "for", "Natural", "Language", "Processing" };
-		sentence = new String[] { "She", "put", "the", "big", "knives", "on", "the", "table" };*/
+//        sentence = new String[]{"Cats", "like", "milk"};
+		sentence = new String[]{"Cat", "is", "white", "like", "milk"};
+//		sentence = new String[] { "Hi", "How", "are", "you", "Welcome", "to", "OpenNLP", "We", "provide", "multiple",
+//				"built-in", "methods", "for", "Natural", "Language", "Processing" };
+//		sentence = new String[] { "She", "put", "the", "big", "knives", "on", "the", "table" };
+
+        System.out.println(Arrays.toString(modelME.tag(sentence)));
     }
 
     private void lemmatization() throws IOException {
