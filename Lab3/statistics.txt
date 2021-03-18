@@ -179,7 +179,7 @@ Locations:
 Organizations: 
 
 ---------OVERALL STATISTICS----------
-Verbs: 0.00%
-Nouns: 0.00%
-Adjectives: 0.00%
-Adverbs: 0.00%
+Verbs: 13.56%
+Nouns: 26.16%
+Adjectives: 8.50%
+Adverbs: 4.79%

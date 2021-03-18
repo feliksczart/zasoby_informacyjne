@@ -115,6 +115,7 @@ public class MovieReviewStatictics {
         TokenizerME tokenizerME = new TokenizerME(_tokenizerModel);
         String[] tokens = tokenizerME.tokenize(text);
         int noTokens = tokens.length;
+        _totalTokensCount += noTokens;
 
         //    - number of (unique) stemmed forms
         // TODO perform stemming (use derived tokens)
@@ -188,6 +189,13 @@ public class MovieReviewStatictics {
 
         // TODO update overall statistics - use tags and check first letters
         // (see https://www.clips.uantwerpen.be/pages/mbsp-tags; first letter = "V" = verb?)
+
+        for (String tag: tags){
+            if (tag.startsWith("R")) _adverbCount += 1;
+            else if (tag.startsWith("J")) _adjectiveCount += 1;
+            else if (tag.startsWith("V") || tag.startsWith("M")) _verbCount += 1;
+            else if (tag.startsWith("N")) _nounCount += 1;
+        }
 
         // ------------------------------------------------------------------
 
