@@ -23,8 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-public class MovieReviewStatictics
-{
+public class MovieReviewStatictics {
     private static final String DOCUMENTS_PATH = "movies/";
     private int _verbCount = 0;
     private int _nounCount = 0;
@@ -40,19 +39,16 @@ public class MovieReviewStatictics
     private PorterStemmer _stemmer;
     private POSModel _posModel;
     private TokenNameFinderModel _peopleModel;
-    private TokenNameFinderModel _placesModel;
+    private TokenNameFinderModel _locationsModel;
     private TokenNameFinderModel _organizationsModel;
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         MovieReviewStatictics statictics = new MovieReviewStatictics();
         statictics.run();
     }
 
-    private void run()
-    {
-        try
-        {
+    private void run() {
+        try {
             initModelsStemmerLemmatizer();
 
             File dir = new File(DOCUMENTS_PATH);
@@ -61,8 +57,7 @@ public class MovieReviewStatictics
             _statisticsWriter = new PrintStream("statistics.txt", "UTF-8");
 
             Arrays.sort(reviews, Comparator.comparing(File::getName));
-            for (File file : reviews)
-            {
+            for (File file : reviews) {
                 System.out.println("Movie: " + file.getName().replace(".txt", ""));
                 _statisticsWriter.println("Movie: " + file.getName().replace(".txt", ""));
 
@@ -75,27 +70,37 @@ public class MovieReviewStatictics
             overallStatistics();
             _statisticsWriter.close();
 
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             Logger.getLogger(MovieReviewStatictics.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    private void initModelsStemmerLemmatizer()
-    {
+    private void initModelsStemmerLemmatizer() {
         //try
         //{
         // TODO: load all OpenNLP models (+Porter stemmer + lemmatizer)
         // from files (use class variables)
+        try {
+            File sentenceModelFile = new File(OpenNLP.SENTENCE_MODEL);
+            File tokenModelFile = new File(OpenNLP.TOKENIZER_MODEL);
+            File peopleModelFile = new File(OpenNLP.PERSON_NAME_MODEL);
+            File locationModelFile = new File(OpenNLP.LOCATION_NAME_MODEL);
+            File organizationModelFile = new File(OpenNLP.ORGANIZATION_NAME_MODEL);
 
-        //} catch (IOException ex)
-        //{
-        //    Logger.getLogger(MovieReviewStatictics.class.getName()).log(Level.SEVERE, null, ex);
-        //}
+            _sentenceModel = new SentenceModel(sentenceModelFile);
+            _tokenizerModel = new TokenizerModel(tokenModelFile);
+            _stemmer = new PorterStemmer();
+            _peopleModel = new TokenNameFinderModel(peopleModelFile);
+            _locationsModel = new TokenNameFinderModel(locationModelFile);
+            _organizationsModel = new TokenNameFinderModel(organizationModelFile);
+
+
+        } catch (IOException ex) {
+            Logger.getLogger(MovieReviewStatictics.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    private void processFile(String text)
-    {
+    private void processFile(String text) {
         // TODO: process the text to find the following statistics:
         // For each movie derive:
         //    - number of sentences
@@ -107,11 +112,11 @@ public class MovieReviewStatictics
         //    - number of (unique) words from a dictionary (lemmatization)
         int noWords = 0;
         //    -  people
-        Span people[] = new Span[] { };
+        Span people[] = new Span[]{};
         //    - locations
-        Span locations[] = new Span[] { };
+        Span locations[] = new Span[]{};
         //    - organisations
-        Span organisations[] = new Span[] { };
+        Span organisations[] = new Span[]{};
 
         // TODO + compute the following overall (for all movies) POS tagging statistics:
         //    - percentage number of adverbs (class variable, private int _verbCount = 0)
@@ -134,7 +139,7 @@ public class MovieReviewStatictics
 
         //for (String token : tokens)
         //{
-            // use .toLowerCase().replaceAll("[^a-z0-9]", ""); thereafter, ignore "" tokens
+        // use .toLowerCase().replaceAll("[^a-z0-9]", ""); thereafter, ignore "" tokens
         //}
 
 
@@ -155,26 +160,22 @@ public class MovieReviewStatictics
         saveResults("Stemmed forms (unique)", noStemmed);
         saveResults("Words from a dictionary (unique)", noWords);
 
-        saveNamedEntities("People", people, new String[] { });
-        saveNamedEntities("Locations", locations, new String[] { });
-        saveNamedEntities("Organizations", organisations, new String[] { });
+        saveNamedEntities("People", people, new String[]{});
+        saveNamedEntities("Locations", locations, new String[]{});
+        saveNamedEntities("Organizations", organisations, new String[]{});
     }
 
 
-    private void saveResults(String feature, int count)
-    {
+    private void saveResults(String feature, int count) {
         String s = feature + ": " + count;
         System.out.println("   " + s);
         _statisticsWriter.println(s);
     }
 
-    private void saveNamedEntities(String entityType, Span spans[], String tokens[])
-    {
+    private void saveNamedEntities(String entityType, Span spans[], String tokens[]) {
         StringBuilder s = new StringBuilder(entityType + ": ");
-        for (int sp = 0; sp < spans.length; sp++)
-        {
-            for (int i = spans[sp].getStart(); i < spans[sp].getEnd(); i++)
-            {
+        for (int sp = 0; sp < spans.length; sp++) {
+            for (int i = spans[sp].getStart(); i < spans[sp].getEnd(); i++) {
                 s.append(tokens[i]);
                 if (i < spans[sp].getEnd() - 1) s.append(" ");
             }
@@ -185,8 +186,7 @@ public class MovieReviewStatictics
         _statisticsWriter.println(s);
     }
 
-    private void overallStatistics()
-    {
+    private void overallStatistics() {
         _statisticsWriter.println("---------OVERALL STATISTICS----------");
         DecimalFormat f = new DecimalFormat("#0.00");
 

@@ -7,6 +7,8 @@
 //          as separate sentences which without them are not sufficient to be treated as a sentence
 //  e1 5c - the "like" in the first sentence should be a verb rather than a conjunction as shown in the array
 
+// A maximum entropy (ME) model is used to evaluate end-of-sentence characters in a string
+
 import opennlp.tools.chunker.ChunkerME;
 import opennlp.tools.chunker.ChunkerModel;
 import opennlp.tools.langdetect.LanguageDetectorME;
@@ -36,7 +38,9 @@ public class OpenNLP {
     public static String POS_MODEL = "models/en-pos-maxent.bin";
     public static String CHUNKER_MODEL = "models/en-chunker.bin";
     public static String LEMMATIZER_DICT = "models/en-lemmatizer.dict";
-    public static String NAME_MODEL = "models/en-ner-person.bin";
+    public static String PERSON_NAME_MODEL = "models/en-ner-person.bin";
+    public static String LOCATION_NAME_MODEL = "models/en-ner-location.bin";
+    public static String ORGANIZATION_NAME_MODEL = "models/en-ner-organization.bin";
     public static String ENTITY_XYZ_MODEL = "models/en-ner-xyz.bin";
 
     public static void main(String[] args) throws IOException {
@@ -46,14 +50,14 @@ public class OpenNLP {
 
     public void run() throws IOException {
 
-        //languageDetection();
-        //tokenization();
+        // languageDetection();
+        // tokenization();
         // sentenceDetection();
-        //posTagging();
+        // posTagging();
         // lemmatization();
         // stemming();
         // chunking();
-        nameFinding();
+        // nameFinding();
     }
 
     private void languageDetection() throws IOException {
@@ -220,7 +224,7 @@ public class OpenNLP {
     }
 
     private void nameFinding() throws IOException {
-        File modelFile = new File(NAME_MODEL);
+        File modelFile = new File(PERSON_NAME_MODEL);
         TokenNameFinderModel model = new TokenNameFinderModel(modelFile);
         NameFinderME modelME = new NameFinderME(model);
 
@@ -242,6 +246,5 @@ public class OpenNLP {
         System.out.println(Arrays.toString(textArray));
         System.out.println(Arrays.toString(modelME.find(textArray)));
         System.out.println(Arrays.toString(xyzModelME.find(textArray)));
-        System.out.println(textArray[25]);
     }
 }

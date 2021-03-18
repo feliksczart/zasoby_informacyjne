@@ -1,0 +1,185 @@
+Movie: 12 Angry Men
+Sentences: 0
+Tokens: 0
+Stemmed forms (unique): 0
+Words from a dictionary (unique): 0
+People: 
+Locations: 
+Organizations: 
+
+Movie: 12 Years a Slave
+Sentences: 0
+Tokens: 0
+Stemmed forms (unique): 0
+Words from a dictionary (unique): 0
+People: 
+Locations: 
+Organizations: 
+
+Movie: 4 Months, 3 Weeks and 2 Days
+Sentences: 0
+Tokens: 0
+Stemmed forms (unique): 0
+Words from a dictionary (unique): 0
+People: 
+Locations: 
+Organizations: 
+
+Movie: All About Eve
+Sentences: 0
+Tokens: 0
+Stemmed forms (unique): 0
+Words from a dictionary (unique): 0
+People: 
+Locations: 
+Organizations: 
+
+Movie: American Graffiti
+Sentences: 0
+Tokens: 0
+Stemmed forms (unique): 0
+Words from a dictionary (unique): 0
+People: 
+Locations: 
+Organizations: 
+
+Movie: Boyhood
+Sentences: 0
+Tokens: 0
+Stemmed forms (unique): 0
+Words from a dictionary (unique): 0
+People: 
+Locations: 
+Organizations: 
+
+Movie: Casablanca
+Sentences: 0
+Tokens: 0
+Stemmed forms (unique): 0
+Words from a dictionary (unique): 0
+People: 
+Locations: 
+Organizations: 
+
+Movie: Citizen Kane
+Sentences: 0
+Tokens: 0
+Stemmed forms (unique): 0
+Words from a dictionary (unique): 0
+People: 
+Locations: 
+Organizations: 
+
+Movie: Gone with the Wind
+Sentences: 0
+Tokens: 0
+Stemmed forms (unique): 0
+Words from a dictionary (unique): 0
+People: 
+Locations: 
+Organizations: 
+
+Movie: Hoop Dreams
+Sentences: 0
+Tokens: 0
+Stemmed forms (unique): 0
+Words from a dictionary (unique): 0
+People: 
+Locations: 
+Organizations: 
+
+Movie: Manchester by the Sea
+Sentences: 0
+Tokens: 0
+Stemmed forms (unique): 0
+Words from a dictionary (unique): 0
+People: 
+Locations: 
+Organizations: 
+
+Movie: Moonlight
+Sentences: 0
+Tokens: 0
+Stemmed forms (unique): 0
+Words from a dictionary (unique): 0
+People: 
+Locations: 
+Organizations: 
+
+Movie: My Left Foot
+Sentences: 0
+Tokens: 0
+Stemmed forms (unique): 0
+Words from a dictionary (unique): 0
+People: 
+Locations: 
+Organizations: 
+
+Movie: Pan's Labyrinth
+Sentences: 0
+Tokens: 0
+Stemmed forms (unique): 0
+Words from a dictionary (unique): 0
+People: 
+Locations: 
+Organizations: 
+
+Movie: Psycho
+Sentences: 0
+Tokens: 0
+Stemmed forms (unique): 0
+Words from a dictionary (unique): 0
+People: 
+Locations: 
+Organizations: 
+
+Movie: Ran
+Sentences: 0
+Tokens: 0
+Stemmed forms (unique): 0
+Words from a dictionary (unique): 0
+People: 
+Locations: 
+Organizations: 
+
+Movie: Singin' in the Rain
+Sentences: 0
+Tokens: 0
+Stemmed forms (unique): 0
+Words from a dictionary (unique): 0
+People: 
+Locations: 
+Organizations: 
+
+Movie: Some Like It Hot
+Sentences: 0
+Tokens: 0
+Stemmed forms (unique): 0
+Words from a dictionary (unique): 0
+People: 
+Locations: 
+Organizations: 
+
+Movie: The Godfather
+Sentences: 0
+Tokens: 0
+Stemmed forms (unique): 0
+Words from a dictionary (unique): 0
+People: 
+Locations: 
+Organizations: 
+
+Movie: Three Colors Red
+Sentences: 0
+Tokens: 0
+Stemmed forms (unique): 0
+Words from a dictionary (unique): 0
+People: 
+Locations: 
+Organizations: 
+
+---------OVERALL STATISTICS----------
+Verbs: 0.00%
+Nouns: 0.00%
+Adjectives: 0.00%
+Adverbs: 0.00%
