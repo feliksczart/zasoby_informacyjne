@@ -105,25 +105,32 @@ public class MovieReviewStatictics {
         // TODO: process the text to find the following statistics:
         // For each movie derive:
         //    - number of sentences
+        // TODO derive sentences (update noSentences variable)
         SentenceDetectorME sentenceDetectorME = new SentenceDetectorME(_sentenceModel);
         int noSentences = sentenceDetectorME.sentDetect(text).length;
 
         //    - number of tokens
+        // TODO derive tokens and POS tags from text
+        // (update noTokens and _totalTokensCount)
         TokenizerME tokenizerME = new TokenizerME(_tokenizerModel);
         String[] tokens = tokenizerME.tokenize(text);
         int noTokens = tokens.length;
 
         //    - number of (unique) stemmed forms
+        // TODO perform stemming (use derived tokens)
+        // (update noStemmed)
         ArrayList<String> stemSentence = new ArrayList<>();
         for (String s: tokens){
             String stm = _stemmer.stem(s);
-            if (!stemSentence.contains(stm)){
+            stm = stm.toLowerCase().replaceAll("[^a-z0-9]", "");
+            if (!stemSentence.contains(stm) && !stm.equals("")){
                 stemSentence.add(stm);
             }
         }
         int noStemmed = stemSentence.size();
 
         //    - number of (unique) words from a dictionary (lemmatization)
+        // TODO perform lemmatization (use derived tokens)
         POSTaggerME posTaggerME = new POSTaggerME(_posModel);
         String[] tags = posTaggerME.tag(tokens);
         String[] lemms = _lemmatizer.lemmatize(tokens, tags);
@@ -135,6 +142,7 @@ public class MovieReviewStatictics {
         }
         int noWords = lemms_fin.size();
 
+        // TODO derive people, locations, organisations (use tokens),
         //    -  people
         NameFinderME peopleME = new NameFinderME(_peopleModel);
         Span[] people = peopleME.find(tokens);
@@ -177,29 +185,6 @@ public class MovieReviewStatictics {
         //    + update _totalTokensCount
 
         // ------------------------------------------------------------------
-
-        // TODO derive sentences (update noSentences variable)
-
-
-        // TODO derive tokens and POS tags from text
-        // (update noTokens and _totalTokensCount)
-
-        // TODO perform stemming (use derived tokens)
-        // (update noStemmed)
-        //Set <String> stems = new HashSet <>();
-
-        //for (String token : tokens)
-        //{
-        // use .toLowerCase().replaceAll("[^a-z0-9]", ""); thereafter, ignore "" tokens
-        //}
-
-
-        // TODO perform lemmatization (use derived tokens)
-        // (remove "O" from results - non-dictionary forms, update noWords)
-
-
-        // TODO derive people, locations, organisations (use tokens),
-        // (update people, locations, organisations lists).
 
         // TODO update overall statistics - use tags and check first letters
         // (see https://www.clips.uantwerpen.be/pages/mbsp-tags; first letter = "V" = verb?)
