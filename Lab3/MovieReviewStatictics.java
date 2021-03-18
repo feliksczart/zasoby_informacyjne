@@ -15,10 +15,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -83,6 +80,8 @@ public class MovieReviewStatictics {
         try {
             File sentenceModelFile = new File(OpenNLP.SENTENCE_MODEL);
             File tokenModelFile = new File(OpenNLP.TOKENIZER_MODEL);
+            File lemmModelFile = new File(OpenNLP.LEMMATIZER_DICT);
+            File posModelFile = new File(OpenNLP.POS_MODEL);
             File peopleModelFile = new File(OpenNLP.PERSON_NAME_MODEL);
             File locationModelFile = new File(OpenNLP.LOCATION_NAME_MODEL);
             File organizationModelFile = new File(OpenNLP.ORGANIZATION_NAME_MODEL);
@@ -90,6 +89,8 @@ public class MovieReviewStatictics {
             _sentenceModel = new SentenceModel(sentenceModelFile);
             _tokenizerModel = new TokenizerModel(tokenModelFile);
             _stemmer = new PorterStemmer();
+            _lemmatizer = new DictionaryLemmatizer(lemmModelFile);
+            _posModel = new POSModel(posModelFile);
             _peopleModel = new TokenNameFinderModel(peopleModelFile);
             _locationsModel = new TokenNameFinderModel(locationModelFile);
             _organizationsModel = new TokenNameFinderModel(organizationModelFile);
@@ -104,19 +105,69 @@ public class MovieReviewStatictics {
         // TODO: process the text to find the following statistics:
         // For each movie derive:
         //    - number of sentences
-        int noSentences = 0;
+        SentenceDetectorME sentenceDetectorME = new SentenceDetectorME(_sentenceModel);
+        int noSentences = sentenceDetectorME.sentDetect(text).length;
+
         //    - number of tokens
-        int noTokens = 0;
+        TokenizerME tokenizerME = new TokenizerME(_tokenizerModel);
+        String[] tokens = tokenizerME.tokenize(text);
+        int noTokens = tokens.length;
+
         //    - number of (unique) stemmed forms
-        int noStemmed = 0;
+        ArrayList<String> stemSentence = new ArrayList<>();
+        for (String s: tokens){
+            String stm = _stemmer.stem(s);
+            if (!stemSentence.contains(stm)){
+                stemSentence.add(stm);
+            }
+        }
+        int noStemmed = stemSentence.size();
+
         //    - number of (unique) words from a dictionary (lemmatization)
-        int noWords = 0;
+        POSTaggerME posTaggerME = new POSTaggerME(_posModel);
+        String[] tags = posTaggerME.tag(tokens);
+        String[] lemms = _lemmatizer.lemmatize(tokens, tags);
+        ArrayList<String> lemms_fin = new ArrayList<>();
+        for (String s: lemms){
+            if (!lemms_fin.contains(s) && !s.equals("O")){
+                lemms_fin.add(s);
+            }
+        }
+        int noWords = lemms_fin.size();
+
         //    -  people
-        Span people[] = new Span[]{};
+        NameFinderME peopleME = new NameFinderME(_peopleModel);
+        Span[] people = peopleME.find(tokens);
+        String spanPeople = Arrays.toString(Span.spansToStrings(people, tokens));
+        spanPeople = spanPeople.substring(1, spanPeople.length() - 1);
+        String[] tmpPeople = spanPeople.split(",");
+        ArrayList<String> people_list = new ArrayList<>();
+        for (String name : tmpPeople) {
+            name = name.trim();
+            people_list.add(name);
+        }
         //    - locations
-        Span locations[] = new Span[]{};
+        NameFinderME locationsME = new NameFinderME(_locationsModel);
+        Span[] locations = locationsME.find(tokens);
+        String spanLocations = Arrays.toString(Span.spansToStrings(locations, tokens));
+        spanLocations = spanLocations.substring(1, spanLocations.length() - 1);
+        String[] tmpLocations = spanLocations.split(",");
+        ArrayList<String> locations_list = new ArrayList<>();
+        for (String name : tmpLocations) {
+            name = name.trim();
+            locations_list.add(name);
+        }
         //    - organisations
-        Span organisations[] = new Span[]{};
+        NameFinderME organisationsME = new NameFinderME(_organizationsModel);
+        Span[] organisations = organisationsME.find(tokens);
+        String spanOrganisations = Arrays.toString(Span.spansToStrings(organisations, tokens));
+        spanOrganisations = spanOrganisations.substring(1, spanOrganisations.length() - 1);
+        String[] tmpOrganizations = spanOrganisations.split(",");
+        ArrayList<String> organizations_list = new ArrayList<>();
+        for (String name : tmpOrganizations) {
+            name = name.trim();
+            organizations_list.add(name);
+        }
 
         // TODO + compute the following overall (for all movies) POS tagging statistics:
         //    - percentage number of adverbs (class variable, private int _verbCount = 0)
@@ -160,9 +211,9 @@ public class MovieReviewStatictics {
         saveResults("Stemmed forms (unique)", noStemmed);
         saveResults("Words from a dictionary (unique)", noWords);
 
-        saveNamedEntities("People", people, new String[]{});
-        saveNamedEntities("Locations", locations, new String[]{});
-        saveNamedEntities("Organizations", organisations, new String[]{});
+        saveList("People", people_list);
+        saveList("Locations", locations_list);
+        saveList("Organizations", organizations_list);
     }
 
 
@@ -180,6 +231,22 @@ public class MovieReviewStatictics {
                 if (i < spans[sp].getEnd() - 1) s.append(" ");
             }
             if (sp < spans.length - 1) s.append(", ");
+        }
+
+        System.out.println("   " + s);
+        _statisticsWriter.println(s);
+    }
+
+    private void saveList(String entityType, ArrayList<String> people_list) {
+        StringBuilder s = new StringBuilder(entityType + ": ");
+        int c = 0;
+        for (String name: people_list){
+            if (c < people_list.size() - 1){
+                s.append(name).append(", ");
+            } else {
+                s.append(name);
+            }
+            c++;
         }
 
         System.out.println("   " + s);

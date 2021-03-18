@@ -199,7 +199,7 @@ public class OpenNLP {
     private void stemming() {
         PorterStemmer porterStemmer = new PorterStemmer();
 
-        ArrayList<String> stemSentence = new ArrayList<String>();
+        ArrayList<String> stemSentence = new ArrayList<>();
         String[] sentence = new String[]{"Hi", "How", "are", "you", "Welcome", "to", "OpenNLP", "We", "provide", "multiple",
                 "built-in", "methods", "for", "Natural", "Language", "Processing"};
 
