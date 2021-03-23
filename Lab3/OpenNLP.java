@@ -7,13 +7,13 @@
 //          as separate sentences which without them are not sufficient to be treated as a sentence
 //  e1 5c - the "like" in the first sentence should be a verb rather than a conjunction as shown in the array
 //  e1 6b - "are" is discarded by the lemmatizer, it also replaces words such as "OpenNLP" with 0
-//          pos tags help in putting words into correct categories??????????????????
-//  e1 7a - post tags help with the program's inability to see context thus providing basic sentence structure????????????????????????????????????
+//          pos tags help in putting words into correct categories
+//  e1 7a - post tags help with the program's inability to see context thus providing basic sentence structure
 //  e1 7b - B is the start of a chunk, while I means it's continuation
-//  the result seems to be correct?????????????
+//  the result seems to be correct
 //  e1 8b - the results are correct
 //  e2 2 -  descriptions in general are going to contain a lot more adjectives due to their descriptive nature as shown by the results of this exercise
-//          there are more parts of speech?????????????????
+//          there are more parts of speech
 
 
 
@@ -68,7 +68,7 @@ public class OpenNLP {
 //        lemmatization();
 //        stemming();
 //         chunking();
-         nameFinding();
+//         nameFinding();
     }
 
     private void languageDetection() throws IOException {
