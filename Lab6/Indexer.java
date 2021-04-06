@@ -3,8 +3,10 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
+import org.apache.lucene.util.Version;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
@@ -14,16 +16,17 @@ import org.xml.sax.SAXException;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class Indexer {
-    public static void main(String args[]) {
+    public static void main(String args[]) throws IOException {
         Indexer indexer = new Indexer();
         indexer.indexDocuments();
     }
 
-    private void indexDocuments() {
+    private void indexDocuments() throws IOException {
         // REMOVE PREVIOUSLY GENERATED INDEX (DONE)
         try {
             FileUtils.deleteDirectory(new File(Constants.index_dir));
@@ -33,8 +36,6 @@ public class Indexer {
         // LOAD HTML DOCUMENTS (TODO)
         ArrayList<Document> documents = getHTMLDocuments();
 
-        assert documents != null;
-        System.out.println(documents.get(0).getField(Constants.id));
         // CONSTRUCT INDEX (TODO)
         // - Firstly, create Analyzer object (StandardAnalyzer).
         //   (An Analyzer builds TokenStreams, which analyze text.
@@ -45,7 +46,13 @@ public class Indexer {
         // - Commit and close the index.
 
         // ----------------------------------
-
+        StandardAnalyzer analyzer = new StandardAnalyzer();
+        IndexWriterConfig config = new IndexWriterConfig(analyzer);
+        Directory index = FSDirectory.open(Paths.get(Constants.index_dir));
+        IndexWriter writer = new IndexWriter(index, config);
+        writer.addDocuments(documents);
+        writer.commit();
+        writer.close();
         // ----------------------------------
 
     }
@@ -109,7 +116,7 @@ public class Indexer {
         // the keys of the fields (e.g., Constants.id) !
         // ----------------------------------
 //        Field idField = new Field(Constants.id, String.valueOf(id), SortedDocValuesField.TYPE);
-        SortedDocValuesField idField = new SortedDocValuesField(Constants.id,new BytesRef(String.valueOf(id).getBytes()));
+        SortedDocValuesField idField = new SortedDocValuesField(Constants.id, new BytesRef(String.valueOf(id).getBytes()));
 //        System.out.println(idField);
         // ----------------------------------
 
@@ -126,7 +133,7 @@ public class Indexer {
         // TODO create a field that is stored and indexed
         // and contains file name
         // ----------------------------------
-        Field nameField = new Field(Constants.filename,file.getName(),TextField.TYPE_STORED);
+        Field nameField = new Field(Constants.filename, file.getName(), TextField.TYPE_STORED);
 //        System.out.println(nameField);
         // ----------------------------------
 

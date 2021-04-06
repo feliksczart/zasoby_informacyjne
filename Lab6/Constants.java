@@ -1,7 +1,4 @@
-
-
-public class Constants
-{
+public class Constants {
     public static final String id = "id";
     public static final String filename = "filename";
     public static final String filesize_int = "filesize_int";
