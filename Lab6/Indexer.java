@@ -4,6 +4,7 @@ import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.BytesRef;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
@@ -12,31 +13,28 @@ import org.apache.tika.sax.BodyContentHandler;
 import org.xml.sax.SAXException;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-public class Indexer
-{
-    public static void main(String args[])
-    {
+public class Indexer {
+    public static void main(String args[]) {
         Indexer indexer = new Indexer();
         indexer.indexDocuments();
     }
 
-    private void indexDocuments()
-    {
+    private void indexDocuments() {
         // REMOVE PREVIOUSLY GENERATED INDEX (DONE)
-        try
-        {
+        try {
             FileUtils.deleteDirectory(new File(Constants.index_dir));
-        } catch (IOException ignored)
-        {
+        } catch (IOException ignored) {
         }
 
         // LOAD HTML DOCUMENTS (TODO)
         ArrayList<Document> documents = getHTMLDocuments();
 
-
+        assert documents != null;
+        System.out.println(documents.get(0).getField(Constants.id));
         // CONSTRUCT INDEX (TODO)
         // - Firstly, create Analyzer object (StandardAnalyzer).
         //   (An Analyzer builds TokenStreams, which analyze text.
@@ -47,23 +45,20 @@ public class Indexer
         // - Commit and close the index.
 
         // ----------------------------------
-        
+
         // ----------------------------------
 
     }
 
 
-    private ArrayList<Document> getHTMLDocuments()
-    {
+    private ArrayList<Document> getHTMLDocuments() {
         // This method is finished. Find getHTMLDocument
         File dir = new File("pages");
         File[] files = dir.listFiles();
-        if (files != null)
-        {
+        if (files != null) {
             ArrayList<Document> htmls = new ArrayList<>(files.length);
-            for (int id = 0; id < files.length; id++)
-            {
-                System.out.println("Loading "+ files[id].getName());
+            for (int id = 0; id < files.length; id++) {
+//                System.out.println("Loading " + files[id].getName());
                 // TODO finish getHTML document
                 htmls.add(getHTMLDocument("pages/" + files[id].getName(), id));
             }
@@ -72,8 +67,7 @@ public class Indexer
         return null;
     }
 
-    private Document getHTMLDocument(String path, int id)
-    {
+    private Document getHTMLDocument(String path, int id) {
         File file = new File(path);
         Document document = new Document();
 
@@ -114,7 +108,9 @@ public class Indexer
         // IMPORTANT NOTE: use static fields of Constants class to get
         // the keys of the fields (e.g., Constants.id) !
         // ----------------------------------
-       
+//        Field idField = new Field(Constants.id, String.valueOf(id), SortedDocValuesField.TYPE);
+        SortedDocValuesField idField = new SortedDocValuesField(Constants.id,new BytesRef(String.valueOf(id).getBytes()));
+//        System.out.println(idField);
         // ----------------------------------
 
         // TODO create a field that is indexed but not stored
@@ -122,29 +118,38 @@ public class Indexer
         // for this purpose, extract text from the document
         // using Tika ( use getTextFromHTMLFile() <- this method is finished )
         // ----------------------------------
-       
+        String content = getTextFromHTMLFile(file);
+        assert content != null;
+        Field contentField = new Field(Constants.content, content, TextField.TYPE_NOT_STORED);
         // ----------------------------------
 
         // TODO create a field that is stored and indexed
         // and contains file name
         // ----------------------------------
-       
+        Field nameField = new Field(Constants.filename,file.getName(),TextField.TYPE_STORED);
+//        System.out.println(nameField);
         // ----------------------------------
 
         // TODO create an INT field (IntPoint) that is indexed
         // and contains file size (bytes, .length())
         // ----------------------------------
-
+        IntPoint sizeField = new IntPoint(Constants.filesize_int, (int) file.length());
+//        System.out.println(sizeField);
         // ----------------------------------
         // //TODO IntPoint is not stored but we want to a file size
         // ... so add another field (StoredField) that stores file size
         // ----------------------------------
-
+        StoredField storedField = new StoredField(Constants.filesize, sizeField.binaryValue().bytes);
+//        System.out.println(storedField);
         // ----------------------------------
 
         // TODO add fields to the document object
         // ----------------------------------
-  
+        document.add(idField);
+        document.add(contentField);
+        document.add(nameField);
+        document.add(sizeField);
+        document.add(storedField);
         // ----------------------------------
 
 
@@ -153,16 +158,13 @@ public class Indexer
     }
 
     // (DONE)
-    private String getTextFromHTMLFile(File file)
-    {
+    private String getTextFromHTMLFile(File file) {
         BodyContentHandler handler = new BodyContentHandler();
         Metadata metadata = new Metadata();
         FileInputStream inputStream;
-        try
-        {
+        try {
             inputStream = new FileInputStream(file);
-        } catch (FileNotFoundException e)
-        {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
             return null;
         }
@@ -171,11 +173,9 @@ public class Indexer
 
         //Html parser
         HtmlParser htmlparser = new HtmlParser();
-        try
-        {
+        try {
             htmlparser.parse(inputStream, handler, metadata, pContext);
-        } catch (IOException | SAXException | TikaException e)
-        {
+        } catch (IOException | SAXException | TikaException e) {
             e.printStackTrace();
         }
 
