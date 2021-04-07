@@ -1,5 +1,7 @@
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.tokenattributes.TermToBytesRefAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.IntPoint;
 import org.apache.lucene.index.DirectoryReader;
@@ -10,15 +12,22 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.BytesRef;
+import org.apache.lucene.util.QueryBuilder;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.text.Normalizer;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class Searcher
-{
+public class Searcher {
 
-    public static void main(String args[])
-    {
+    public static void main(String args[]) throws IOException {
         // Load the previously generated index (DONE)
         IndexReader reader = getIndexReader();
         assert reader != null;
@@ -40,12 +49,15 @@ public class Searcher
         // Then, build a Term object (seek in content - Constants.content) and TermQuery.
         // Lastly, invoke printResultsForQuery.
         String queryMammal = "MaMMal";
-        TermQuery tq1;
+        TermQuery mammalQuery;
         {
             // --------------------------------------
             // COMPLETE THE CODE HERE
             System.out.println("1) term query: mammal (CONTENT)");
-         
+            BytesRef br = new BytesRef(queryMammal.getBytes());
+            String normalized_queryMammal = br.utf8ToString();
+            mammalQuery = new TermQuery(new Term(Constants.content,normalized_queryMammal));
+            printResultsForQuery(indexSearcher,mammalQuery);
             // --------------------------------------
         }
 
@@ -56,7 +68,7 @@ public class Searcher
         {
             // --------------------------------------
             System.out.println("2) term query bird (CONTENT)");
-        
+
             // --------------------------------------
         }
 
@@ -71,7 +83,7 @@ public class Searcher
         {
             // --------------------------------------
             System.out.println("3) boolean query (CONTENT): mammal or bird");
-       
+
             // --------------------------------------
         }
 
@@ -81,7 +93,7 @@ public class Searcher
         {
             // --------------------------------------
             System.out.println("4) range query: file size in [0b, 1000b]");
-          
+
             // --------------------------------------
         }
 
@@ -90,7 +102,7 @@ public class Searcher
         {
             // --------------------------------------
             System.out.println("5) Prefix query (FILENAME): ant");
-         
+
             // --------------------------------------
         }
 
@@ -100,7 +112,7 @@ public class Searcher
         {
             // --------------------------------------
             System.out.println("6) Wildcard query (CONTENT): eat?");
-    
+
             // --------------------------------------
         }
 
@@ -110,7 +122,7 @@ public class Searcher
         {
             // --------------------------------------
             System.out.println("7) Fuzzy querry (CONTENT): mamml?");
-     
+
             // --------------------------------------
         }
 
@@ -134,22 +146,20 @@ public class Searcher
         {
             // --------------------------------------
             System.out.println("8) query parser = " + selectedQuery);
-     
+
             // --------------------------------------
         }
 
+//        printResultsForQuery(indexSearcher, null);
 
-        try
-        {
+        try {
             reader.close();
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static void printResultsForQuery(IndexSearcher indexSearcher, Query q)
-    {
+    private static void printResultsForQuery(IndexSearcher indexSearcher, Query q) throws IOException {
         // TODO finish this method
         // - use indexSearcher to search for documents that
         // are relevant according to the query q
@@ -163,19 +173,25 @@ public class Searcher
         // and use document.get(name of the field) to get the value of id, filename, etc.
 
         // --------------------------------
-      
+        TopDocs td = indexSearcher.search(q,Constants.top_docs);
+        System.out.println(Arrays.toString(td.scoreDocs));
+        for (ScoreDoc sd: td.scoreDocs){
+            System.out.println(sd);
+            Document d = indexSearcher.doc(sd.doc);
+            System.out.println("    a) " + sd.score);
+            System.out.println("    b) " + d.get(Constants.filename));
+            System.out.println("    c) " + d.get(Constants.id));
+            System.out.println("    d) " + d.get(Constants.filesize));
+        }
         // --------------------------------
     }
 
-    private static IndexReader getIndexReader()
-    {
-        try
-        {
+    private static IndexReader getIndexReader() {
+        try {
             Directory dir = FSDirectory.open(Paths.get(Constants.index_dir));
             return DirectoryReader.open(dir);
 
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
