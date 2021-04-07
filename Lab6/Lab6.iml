@@ -8,12 +8,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="lucene-queryparser-7.2.1" level="project" />
-    <orderEntry type="library" name="lucene-sandbox-7.2.1" level="project" />
     <orderEntry type="library" name="tika-app-1.17" level="project" />
-    <orderEntry type="library" name="lucene-test-framework-7.2.1" level="project" />
     <orderEntry type="library" name="lucene-core-7.2.1" level="project" />
     <orderEntry type="library" name="lucene-backward-codecs-7.2.1" level="project" />
-    <orderEntry type="library" name="lucene-misc-7.2.1" level="project" />
-    <orderEntry type="library" name="lucene-analyzers-common-7.2.1" level="project" />
   </component>
 </module>
