@@ -1,3 +1,4 @@
+import opennlp.tools.parser.Cons;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -118,7 +119,9 @@ public class Searcher {
         {
             // --------------------------------------
             System.out.println("5) Prefix query (FILENAME): ant");
+            PrefixQuery pq = new PrefixQuery(new Term(Constants.filename,"ant"));
 
+            printResultsForQuery(indexSearcher,pq);
             // --------------------------------------
         }
 
@@ -128,7 +131,9 @@ public class Searcher {
         {
             // --------------------------------------
             System.out.println("6) Wildcard query (CONTENT): eat?");
+            WildcardQuery wq = new WildcardQuery(new Term(Constants.content, "eat?"));
 
+            printResultsForQuery(indexSearcher, wq);
             // --------------------------------------
         }
 
@@ -138,7 +143,9 @@ public class Searcher {
         {
             // --------------------------------------
             System.out.println("7) Fuzzy querry (CONTENT): mamml?");
+            FuzzyQuery fq = new FuzzyQuery(new Term(Constants.content, "mamml"));
 
+            printResultsForQuery(indexSearcher, fq);
             // --------------------------------------
         }
 
@@ -165,9 +172,7 @@ public class Searcher {
 
             // --------------------------------------
         }
-
-//        printResultsForQuery(indexSearcher, null);
-
+        
         try {
             reader.close();
         } catch (IOException e) {
