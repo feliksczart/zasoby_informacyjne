@@ -115,9 +115,7 @@ public class Indexer {
         // IMPORTANT NOTE: use static fields of Constants class to get
         // the keys of the fields (e.g., Constants.id) !
         // ----------------------------------
-//        Field idField = new Field(Constants.id, String.valueOf(id), SortedDocValuesField.TYPE);
-        SortedDocValuesField idField = new SortedDocValuesField(Constants.id, new BytesRef(String.valueOf(id).getBytes()));
-//        System.out.println(idField);
+        StoredField idField = new StoredField(Constants.id, id);
         // ----------------------------------
 
         // TODO create a field that is indexed but not stored
@@ -127,7 +125,8 @@ public class Indexer {
         // ----------------------------------
         String content = getTextFromHTMLFile(file);
         assert content != null;
-        Field contentField = new Field(Constants.content, content, TextField.TYPE_NOT_STORED);
+//        Field contentField = new Field(Constants.content, content, TextField.TYPE_NOT_STORED);
+        TextField contentField = new TextField(Constants.content, content, Field.Store.NO);
         // ----------------------------------
 
         // TODO create a field that is stored and indexed

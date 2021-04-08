@@ -180,7 +180,7 @@ public class Searcher {
             Document d = indexSearcher.doc(sd.doc);
             System.out.println(sd.score + ": " + d.get(Constants.filename) +
                     "\n     (Id=" + d.get(Constants.id) + ")\n     (Content=" +
-                    d.get(Constants.content) + ")\n     (Size=" + d.get(Constants.filesize));
+                    d.get(Constants.content) + ")\n     (Size=" + d.get(Constants.filesize) + ")\n");
         }
         // --------------------------------
     }
