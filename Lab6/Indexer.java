@@ -126,38 +126,34 @@ public class Indexer {
         String content = getTextFromHTMLFile(file);
         assert content != null;
 //        Field contentField = new Field(Constants.content, content, TextField.TYPE_NOT_STORED);
-        TextField contentField = new TextField(Constants.content, content, Field.Store.NO);
+        Field contentField = new Field(Constants.content, content, TextField.TYPE_STORED);
         // ----------------------------------
 
         // TODO create a field that is stored and indexed
         // and contains file name
         // ----------------------------------
         Field nameField = new Field(Constants.filename, file.getName(), TextField.TYPE_STORED);
-//        System.out.println(nameField);
         // ----------------------------------
 
         // TODO create an INT field (IntPoint) that is indexed
         // and contains file size (bytes, .length())
         // ----------------------------------
         IntPoint sizeField = new IntPoint(Constants.filesize_int, (int) file.length());
-//        System.out.println(sizeField);
         // ----------------------------------
         // //TODO IntPoint is not stored but we want to a file size
         // ... so add another field (StoredField) that stores file size
         // ----------------------------------
-        StoredField storedField = new StoredField(Constants.filesize, sizeField.binaryValue().bytes);
-//        System.out.println(storedField);
+        StoredField storedField = new StoredField(Constants.filesize, file.length());
         // ----------------------------------
 
         // TODO add fields to the document object
         // ----------------------------------
         document.add(idField);
-        document.add(contentField);
         document.add(nameField);
+        document.add(contentField);
         document.add(sizeField);
         document.add(storedField);
         // ----------------------------------
-
 
         return document;
 
