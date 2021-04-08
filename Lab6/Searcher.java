@@ -49,7 +49,7 @@ public class Searcher {
         // Then, build a Term object (seek in content - Constants.content) and TermQuery.
         // Lastly, invoke printResultsForQuery.
         String queryMammal = "MaMMal";
-        TermQuery mammalQuery;
+        TermQuery tq1;
         {
             // --------------------------------------
             // COMPLETE THE CODE HERE
@@ -57,9 +57,9 @@ public class Searcher {
             BytesRef br = new BytesRef(queryMammal.getBytes());
             String normalized_queryMammal = br.utf8ToString();
             QueryParser parser = new QueryParser(Constants.content, analyzer);
-            Query query = parser.parse(normalized_queryMammal);
+            tq1 = (TermQuery) parser.parse(normalized_queryMammal);
 
-            printResultsForQuery(indexSearcher,query);
+            printResultsForQuery(indexSearcher,tq1);
             // --------------------------------------
         }
 
@@ -70,7 +70,12 @@ public class Searcher {
         {
             // --------------------------------------
             System.out.println("2) term query bird (CONTENT)");
+            BytesRef br = new BytesRef(queryBird.getBytes());
+            String normalized_queryBird = br.utf8ToString();
+            QueryParser parser = new QueryParser(Constants.content, analyzer);
+            tq2 = (TermQuery) parser.parse(normalized_queryBird);
 
+            printResultsForQuery(indexSearcher,tq2);
             // --------------------------------------
         }
 
@@ -86,6 +91,13 @@ public class Searcher {
             // --------------------------------------
             System.out.println("3) boolean query (CONTENT): mammal or bird");
 
+            BooleanQuery.Builder builder = new BooleanQuery.Builder();
+            builder.add(tq1, BooleanClause.Occur.SHOULD);
+            builder.add(tq2, BooleanClause.Occur.SHOULD);
+            builder.setMinimumNumberShouldMatch(1);
+            Query q = builder.build();
+
+            printResultsForQuery(indexSearcher,q);
             // --------------------------------------
         }
 
@@ -95,7 +107,9 @@ public class Searcher {
         {
             // --------------------------------------
             System.out.println("4) range query: file size in [0b, 1000b]");
+            Query q = IntPoint.newRangeQuery(Constants.filesize_int,0,1000);
 
+            printResultsForQuery(indexSearcher, q);
             // --------------------------------------
         }
 
