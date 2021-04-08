@@ -15,6 +15,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.QueryBuilder;
+import org.apache.lucene.util.Version;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -149,8 +150,7 @@ public class Searcher {
             // --------------------------------------
         }
 
-        // TODO now, use QueryParser to parse human-entered query strings
-        // and generate query object.
+        // TODO now, use QueryParser to parse human-entered query strings and generate query object.
         // - use AND, OR , NOT, (, ), + (must), and - (must not) to construct boolean queries
         // - use * and ? to contstruct wildcard queries
         // - use ~ to construct fuzzy (one word, similarity) or proximity (at least two words) queries
@@ -163,16 +163,18 @@ public class Searcher {
         String queryP4 = "(\"nocturnal life\"~10) OR bat";
         String queryP5 = "(\"nocturnal life\"~10) OR (\"are nocturnal\"~10)";
         // Select some query:
-        String selectedQuery = queryP1;
+        String selectedQuery = queryP5;
         // Complete the code here, i.e., build query parser object, parse selected query
         // to query object, and find relevant documents. Analyze the outcomes.
         {
             // --------------------------------------
             System.out.println("8) query parser = " + selectedQuery);
+            Query q = new QueryParser(Constants.content, analyzer).parse(selectedQuery);
 
+            printResultsForQuery(indexSearcher,q);
             // --------------------------------------
         }
-        
+
         try {
             reader.close();
         } catch (IOException e) {
