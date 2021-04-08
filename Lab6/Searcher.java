@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 
 public class Searcher {
 
-    public static void main(String args[]) throws IOException {
+    public static void main(String args[]) throws IOException, ParseException {
         // Load the previously generated index (DONE)
         IndexReader reader = getIndexReader();
         assert reader != null;
@@ -56,8 +56,10 @@ public class Searcher {
             System.out.println("1) term query: mammal (CONTENT)");
             BytesRef br = new BytesRef(queryMammal.getBytes());
             String normalized_queryMammal = br.utf8ToString();
-            mammalQuery = new TermQuery(new Term(Constants.content,normalized_queryMammal));
-            printResultsForQuery(indexSearcher,mammalQuery);
+            QueryParser parser = new QueryParser(Constants.content, analyzer);
+            Query query = parser.parse(normalized_queryMammal);
+
+            printResultsForQuery(indexSearcher,query);
             // --------------------------------------
         }
 
@@ -174,14 +176,11 @@ public class Searcher {
 
         // --------------------------------
         TopDocs td = indexSearcher.search(q,Constants.top_docs);
-        System.out.println(Arrays.toString(td.scoreDocs));
         for (ScoreDoc sd: td.scoreDocs){
-            System.out.println(sd);
             Document d = indexSearcher.doc(sd.doc);
-            System.out.println("    a) " + sd.score);
-            System.out.println("    b) " + d.get(Constants.filename));
-            System.out.println("    c) " + d.get(Constants.id));
-            System.out.println("    d) " + d.get(Constants.filesize));
+            System.out.println(sd.score + ": " + d.get(Constants.filename) +
+                    "\n     (Id=" + d.get(Constants.id) + ")\n     (Content=" +
+                    d.get(Constants.content) + ")\n     (Size=" + d.get(Constants.filesize));
         }
         // --------------------------------
     }
