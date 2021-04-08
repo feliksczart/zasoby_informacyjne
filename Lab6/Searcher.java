@@ -178,9 +178,9 @@ public class Searcher {
         TopDocs td = indexSearcher.search(q,Constants.top_docs);
         for (ScoreDoc sd: td.scoreDocs){
             Document d = indexSearcher.doc(sd.doc);
-            System.out.println(sd.score + ": " + d.get(Constants.filename) +
-                    "\n     (Id=" + d.get(Constants.id) + ")\n     (Content=" +
-                    d.get(Constants.content) + ")\n     (Size=" + d.get(Constants.filesize) + ")\n");
+            System.out.println("\t" + sd.score + ": " + d.get(Constants.filename) +
+                    "\n\t\t(Id=" + d.get(Constants.id) + ")\n\t\t(Content=" +
+                    d.get(Constants.content) + ")\n\t\t(Size=" + d.get(Constants.filesize) + ")\n");
         }
         // --------------------------------
     }
